@@ -1,10 +1,10 @@
-# my_rights_mobile_app
+# MyRights Mobile App
 
-A new Flutter project.
+MyRights is a mobile application designed to empower Rwandan citizens with civic education, legal aid resources, and secure reporting mechanisms for abuses or corruption.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
