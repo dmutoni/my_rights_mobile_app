@@ -1,125 +1,112 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:my_rights_mobile_app/models/user_model.dart';
+import 'package:my_rights_mobile_app/service/firebase_service.dart';
 
 // Auth State
 class AuthState {
   final bool isAuthenticated;
   final bool isLoading;
   final String? error;
-  final User? user;
+  final UserModel? user;
+  final bool isEmailVerified;
 
   const AuthState({
     this.isAuthenticated = false,
     this.isLoading = false,
     this.error,
     this.user,
+    this.isEmailVerified = false,
   });
 
   AuthState copyWith({
     bool? isAuthenticated,
     bool? isLoading,
     String? error,
-    User? user,
+    UserModel? user,
+    bool? isEmailVerified,
   }) {
     return AuthState(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       user: user ?? this.user,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
     );
   }
 }
 
-// User Model
-class User {
-  final String id;
-  final String email;
-  final String name;
-  final bool isEmailVerified;
-
-  const User({
-    required this.id,
-    required this.email,
-    required this.name,
-    this.isEmailVerified = false,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'] ?? '',
-      email: json['email'] ?? '',
-      name: json['name'] ?? '',
-      isEmailVerified: json['isEmailVerified'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'name': name,
-      'isEmailVerified': isEmailVerified,
-    };
-  }
-}
-
-// Auth Notifier
+// Auth Notifier with Firebase integration
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier() : super(const AuthState());
+  AuthNotifier() : super(const AuthState()) {
+    // Listen to auth state changes
+    FirebaseService.authStateChanges.listen(_onAuthStateChanged);
+  }
 
-  // Login
-  Future<void> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+  // Handle Firebase auth state changes
+  void _onAuthStateChanged(User? firebaseUser) async {
+    if (firebaseUser != null) {
+      // User is signed in, get user document from Firestore
+      try {
+        final userDoc = await FirebaseService.getUserDocument(firebaseUser.uid);
+        if (userDoc != null) {
+          state = state.copyWith(
+            isAuthenticated: true,
+            isLoading: false,
+            user: userDoc,
+            isEmailVerified: firebaseUser.emailVerified,
+          );
+        } else {
+          // User document doesn't exist, create it
+          await FirebaseService.createUserDocument(
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName ?? '',
+            email: firebaseUser.email ?? '',
+          );
 
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Mock successful login
-      if (email.isNotEmpty && password.isNotEmpty) {
-        final user = User(
-          id: '123',
-          email: email,
-          name: 'John Doe',
-          isEmailVerified: true,
-        );
-
+          final newUserDoc =
+              await FirebaseService.getUserDocument(firebaseUser.uid);
+          state = state.copyWith(
+            isAuthenticated: true,
+            isLoading: false,
+            user: newUserDoc,
+            isEmailVerified: firebaseUser.emailVerified,
+          );
+        }
+      } catch (e) {
         state = state.copyWith(
-          isAuthenticated: true,
           isLoading: false,
-          user: user,
+          error: 'Failed to load user data: $e',
         );
-      } else {
-        throw Exception('Invalid credentials');
       }
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+    } else {
+      // User is signed out
+      state = const AuthState();
     }
   }
 
-  // Sign up
+  // Sign up with email and password
   Future<void> signup(String name, String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Mock successful signup
-      final user = User(
-        id: '124',
+      // Create Firebase Auth user
+      final credential = await FirebaseService.signUpWithEmailAndPassword(
         email: email,
-        name: name,
-        isEmailVerified: false,
+        password: password,
       );
 
-      state = state.copyWith(
-        isAuthenticated: false,
-        isLoading: false,
-        user: user,
+      // Update display name
+      await FirebaseService.updateUserProfile(displayName: name);
+
+      // Create user document in Firestore
+      await FirebaseService.createUserDocument(
+        uid: credential.user!.uid,
+        name: name,
+        email: email,
       );
+
+      // The auth state will be updated automatically by the listener
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -128,13 +115,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Forgot password
+  // Sign in with email and password
+  Future<void> login(String email, String password) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      await FirebaseService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // The auth state will be updated automatically by the listener
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  // Send password reset email
   Future<void> forgotPassword(String email) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      await FirebaseService.sendPasswordResetEmail(email);
 
       state = state.copyWith(isLoading: false);
     } catch (e) {
@@ -145,30 +150,85 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Verify OTP
-  Future<void> verifyOTP(String otp) async {
+  // Send email verification
+  Future<void> sendEmailVerification() async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      await FirebaseService.sendEmailVerification();
 
-      // Mock successful verification
-      if (otp == '123456') {
-        final updatedUser = User(
-          id: state.user?.id ?? '',
-          email: state.user?.email ?? '',
-          name: state.user?.name ?? '',
-          isEmailVerified: true,
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  // Check email verification status
+  Future<void> checkEmailVerification() async {
+    try {
+      await FirebaseService.reloadUser();
+
+      final isVerified = FirebaseService.isEmailVerified;
+      if (isVerified && state.user != null) {
+        // Update Firestore document
+        await FirebaseService.updateUserDocument(
+          uid: state.user!.id,
+          data: {'isEmailVerified': true},
         );
 
+        // Update local state
         state = state.copyWith(
-          isAuthenticated: true,
+          isEmailVerified: true,
+          user: state.user!.copyWith(isEmailVerified: true),
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
+  // Update user profile
+  Future<void> updateProfile({
+    String? name,
+    String? phone,
+    String? photoURL,
+  }) async {
+    if (state.user == null) return;
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      // Update Firebase Auth profile
+      if (name != null) {
+        await FirebaseService.updateUserProfile(displayName: name);
+      }
+
+      // Update Firestore document
+      final updateData = <String, dynamic>{};
+      if (name != null) updateData['name'] = name;
+      if (phone != null) updateData['phone'] = phone;
+      if (photoURL != null) updateData['photoURL'] = photoURL;
+
+      if (updateData.isNotEmpty) {
+        await FirebaseService.updateUserDocument(
+          uid: state.user!.id,
+          data: updateData,
+        );
+
+        // Update local state
+        state = state.copyWith(
           isLoading: false,
-          user: updatedUser,
+          user: state.user!.copyWith(
+            name: name ?? state.user!.name,
+            phone: phone ?? state.user!.phone,
+            photoURL: photoURL ?? state.user!.photoURL,
+          ),
         );
       } else {
-        throw Exception('Invalid OTP');
+        state = state.copyWith(isLoading: false);
       }
     } catch (e) {
       state = state.copyWith(
@@ -178,9 +238,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Logout
-  void logout() {
-    state = const AuthState();
+  // Sign out
+  Future<void> logout() async {
+    try {
+      await FirebaseService.signOut();
+      // The auth state will be updated automatically by the listener
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
+  // Delete account
+  Future<void> deleteAccount() async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      await FirebaseService.deleteAccount();
+      // The auth state will be updated automatically by the listener
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
   }
 
   // Clear error
@@ -207,6 +287,10 @@ final authErrorProvider = Provider<String?>((ref) {
   return ref.watch(authProvider).error;
 });
 
-final currentUserProvider = Provider<User?>((ref) {
+final currentUserProvider = Provider<UserModel?>((ref) {
   return ref.watch(authProvider).user;
+});
+
+final isEmailVerifiedProvider = Provider<bool>((ref) {
+  return ref.watch(authProvider).isEmailVerified;
 });

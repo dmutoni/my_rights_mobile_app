@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/screens/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/forgot_password_screen.dart';
+import 'package:my_rights_mobile_app/screens/home_screen.dart';
 import 'package:my_rights_mobile_app/screens/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
@@ -14,6 +15,7 @@ class AppRouter {
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
   static const String confirmAccount = '/confirm-account';
+  static const String home = '/home';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -50,6 +52,11 @@ class AppRouter {
           final email = state.uri.queryParameters['email'] ?? '';
           return ConfirmAccountScreen(email: email);
         },
+      ),
+      GoRoute(
+        path: home,
+        name: 'home',
+        builder: (context, state) => const HomeScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

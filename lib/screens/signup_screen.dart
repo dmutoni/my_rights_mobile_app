@@ -43,6 +43,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       final authState = ref.read(authProvider);
       if (authState.user != null && !authState.isAuthenticated) {
         // Navigate to confirm account screen
+
         context
             .go('${AppRouter.confirmAccount}?email=${_emailController.text}');
       } else if (authState.error != null) {

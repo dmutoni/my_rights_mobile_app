@@ -38,7 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final authState = ref.read(authProvider);
       if (authState.isAuthenticated) {
         // Navigate to home or dashboard
-        context.go('/home'); // You'll need to add this route
+        context.go('/home');
       } else if (authState.error != null) {
         // Show error message
         if (mounted) {
@@ -83,8 +83,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-
-                // Welcome back text
                 const Text(
                   'Welcome back',
                   style: TextStyle(
@@ -93,10 +91,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
-                // Email field
                 CustomTextField(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -104,10 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   type: TextFieldType.email,
                   validator: Validators.email,
                 ),
-
                 const SizedBox(height: 20),
-
-                // Password field
                 CustomTextField(
                   label: 'Password',
                   hint: 'Enter your password',
@@ -115,10 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   type: TextFieldType.password,
                   validator: Validators.password,
                 ),
-
                 const SizedBox(height: 16),
-
-                // Forgot password
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
@@ -133,20 +122,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 40),
-
-                // Login button
                 CustomButton(
                   text: 'Login',
                   width: double.infinity,
                   isLoading: authState.isLoading,
                   onPressed: _handleLogin,
                 ),
-
                 const Spacer(),
-
-                // Sign up link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

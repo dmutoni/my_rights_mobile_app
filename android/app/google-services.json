@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "387405403057",
+    "project_id": "my-rights-d32cb",
+    "storage_bucket": "my-rights-d32cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:387405403057:android:2c4bd447dc9f31ad33a390",
+        "android_client_info": {
+          "package_name": "com.example.my_rights_mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT9kP-4fjDC6webIXmR-imL8gjZjJJ2UY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
