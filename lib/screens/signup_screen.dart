@@ -39,19 +39,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             _passwordController.text,
           );
 
-      // Check if signup was successful
       final authState = ref.read(authProvider);
       if (authState.user != null && !authState.isAuthenticated) {
-        // Navigate to confirm account screen
-
         context
             .go('${AppRouter.confirmAccount}?email=${_emailController.text}');
       } else if (authState.error != null) {
-        // Show error message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(authState.error!),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      } else {
+        try {} catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
               backgroundColor: AppColors.error,
             ),
           );
@@ -91,7 +96,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 const SizedBox(height: 20),
 
-                // Description
                 const Text(
                   'Sign up now to access all legal knowledge and\naccess to justice in Rwanda',
                   style: TextStyle(
@@ -103,7 +107,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 40),
 
-                // Name field
                 CustomTextField(
                   label: 'Name',
                   hint: 'Enter your full name',
@@ -114,7 +117,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
-                // Email field
                 CustomTextField(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -125,7 +127,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
-                // Password field
                 CustomTextField(
                   label: 'Password',
                   hint: 'Create a password',
@@ -136,7 +137,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
-                // Confirm password field
                 CustomTextField(
                   label: 'Confirm Password',
                   hint: 'Confirm your password',
@@ -149,8 +149,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 ),
 
                 const SizedBox(height: 40),
-
-                // Sign up button
                 CustomButton(
                   text: 'Sign Up',
                   width: double.infinity,

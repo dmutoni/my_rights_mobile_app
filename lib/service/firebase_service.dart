@@ -96,6 +96,7 @@ class FirebaseService {
 
       await _firestore.collection('users').doc(uid).set(userModel.toJson());
     } catch (e) {
+      print('Failed to create user document: $e');
       throw Exception('Failed to create user document: $e');
     }
   }
@@ -143,14 +144,12 @@ class FirebaseService {
     }
   }
 
-  // Delete user account
   static Future<void> deleteAccount() async {
     try {
       final uid = _auth.currentUser?.uid;
       if (uid != null) {
-        // Delete user document from Firestore
         await _firestore.collection('users').doc(uid).delete();
-        // Delete Firebase Auth user
+
         await _auth.currentUser?.delete();
       }
     } catch (e) {
@@ -189,11 +188,9 @@ class FirebaseService {
     }
   }
 
-  // Firestore Collections
   static CollectionReference get usersCollection =>
       _firestore.collection('users');
 
-  // Add more Firestore operations as needed
   static Future<void> addDocument({
     required String collection,
     required Map<String, dynamic> data,

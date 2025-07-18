@@ -36,17 +36,13 @@ class AuthState {
   }
 }
 
-// Auth Notifier with Firebase integration
 class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier() : super(const AuthState()) {
-    // Listen to auth state changes
     FirebaseService.authStateChanges.listen(_onAuthStateChanged);
   }
 
-  // Handle Firebase auth state changes
   void _onAuthStateChanged(User? firebaseUser) async {
     if (firebaseUser != null) {
-      // User is signed in, get user document from Firestore
       try {
         final userDoc = await FirebaseService.getUserDocument(firebaseUser.uid);
         if (userDoc != null) {
@@ -57,7 +53,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
             isEmailVerified: firebaseUser.emailVerified,
           );
         } else {
-          // User document doesn't exist, create it
           await FirebaseService.createUserDocument(
             uid: firebaseUser.uid,
             name: firebaseUser.displayName ?? '',
@@ -80,33 +75,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } else {
-      // User is signed out
       state = const AuthState();
     }
   }
 
-  // Sign up with email and password
   Future<void> signup(String name, String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // Create Firebase Auth user
       final credential = await FirebaseService.signUpWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Update display name
       await FirebaseService.updateUserProfile(displayName: name);
 
-      // Create user document in Firestore
       await FirebaseService.createUserDocument(
         uid: credential.user!.uid,
         name: name,
         email: email,
       );
-
-      // The auth state will be updated automatically by the listener
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -115,7 +103,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Sign in with email and password
   Future<void> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -124,8 +111,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         email: email,
         password: password,
       );
-
-      // The auth state will be updated automatically by the listener
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -134,7 +119,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Send password reset email
   Future<void> forgotPassword(String email) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -150,7 +134,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Send email verification
   Future<void> sendEmailVerification() async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -166,20 +149,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Check email verification status
   Future<void> checkEmailVerification() async {
     try {
       await FirebaseService.reloadUser();
 
       final isVerified = FirebaseService.isEmailVerified;
       if (isVerified && state.user != null) {
-        // Update Firestore document
         await FirebaseService.updateUserDocument(
           uid: state.user!.id,
           data: {'isEmailVerified': true},
         );
 
-        // Update local state
         state = state.copyWith(
           isEmailVerified: true,
           user: state.user!.copyWith(isEmailVerified: true),
