@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
+import 'package:my_rights_mobile_app/provider/course_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
+import 'package:my_rights_mobile_app/shared/widgets/progress_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/quick_access_card.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final courseProgressAsync = ref.watch(courseProgressProvider);
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(),
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Quick Access Section
                   Text(
                     'Quick Access',
-                    style: TextStyle(
+                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).appBarTheme.foregroundColor
@@ -57,6 +57,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => {},
                     // onTap: () => context.go(AppRouter.legalAid),
                   ),
+                  const SizedBox(height: 20),
+                  // Progress Section
+                  Text(
+                    'Your Progress',
+                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).appBarTheme.foregroundColor
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  courseProgressAsync.when(
+                    data: (courseProgress) => ProgressCard(
+                      title: 'Course Completion',
+                      percentage: courseProgress?.percentage ?? 0.0,
+                    ),
+                    loading: () => const LinearProgressIndicator(),
+                    error: (error, stack) => const Text('Error loading progress'),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
