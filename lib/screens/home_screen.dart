@@ -6,6 +6,7 @@ import 'package:my_rights_mobile_app/shared/widgets/course_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
+import 'package:my_rights_mobile_app/shared/widgets/info_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/progress_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/quick_access_card.dart';
 
@@ -16,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final courseProgressAsync = ref.watch(courseProgressProvider);
     final featuredCoursesAsync = ref.watch(featuredCoursesProvider);
+    final helpfulTipsAsync = ref.watch(helpfulTipsProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
                       color: Theme.of(context).appBarTheme.foregroundColor
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   QuickAccessCard(
                     icon: MingCuteIcons.mgc_book_6_line,
                     title: 'Civic Education',
@@ -124,6 +126,38 @@ class HomeScreen extends ConsumerWidget {
                     },
                     loading: () => const Center(child: CircularProgressIndicator()),
                     error: (error, stack) => Center(child: Text('Error loading courses')),
+                  ),
+                  const SizedBox(height: 20),
+                  // Helpful Tips Section
+                  Text(
+                    'Helpful Tips',
+                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).appBarTheme.foregroundColor
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  helpfulTipsAsync.when(
+                    data: (tips) {
+                      if (tips.isEmpty) {
+                        // Show empty state if no tips
+                        return EmptyCard(
+                          icon: MingCuteIcons.mgc_light_line,
+                          title: 'No Helpful Tips',
+                          description: 'Helpful tips will appear here when available. Check back later for new content!',
+                        );
+                      }
+                      return Column(
+                        children: tips.map((tip) => InfoCard(
+                          title: tip.title,
+                          description: tip.description,
+                          imageUrl: tip.imageUrl,
+                        )).toList(),
+                      );
+                    },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) => Center(child: Text('Error loading tips')),
                   ),
                   const SizedBox(height: 20),
                 ],
