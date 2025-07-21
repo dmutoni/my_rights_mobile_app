@@ -22,149 +22,151 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: CustomAppBar(title: 'MyRights'),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  // Quick Access Section
-                  Text(
-                    'Quick Access',
-                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).appBarTheme.foregroundColor
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    // Quick Access Section
+                    Text(
+                      'Quick Access',
+                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).appBarTheme.foregroundColor
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  QuickAccessCard(
-                    icon: MingCuteIcons.mgc_book_6_line,
-                    title: 'Civic Education',
-                    description: 'Learn about your rights and responsibilities as a citizen.',
-                    onTap: () => {},
-                    // onTap: () => context.go(AppRouter.civicEducation),
-                  ),
-                  QuickAccessCard(
-                    icon: MingCuteIcons.mgc_announcement_line,
-                    title: 'Report an Issue',
-                    description: 'Report incidents of injustice or corruption.',
-                    onTap: () => {},
-                    // onTap: () => context.go(AppRouter.reportIssue),
-                  ),
-                  QuickAccessCard(
-                    icon: MingCuteIcons.mgc_balance_line,
-                    title: 'Legal Aid',
-                    description: 'Find legal assistance and resources.',
-                    onTap: () => {},
-                    // onTap: () => context.go(AppRouter.legalAid),
-                  ),
-                  const SizedBox(height: 20),
-                  // Progress Section
-                  Text(
-                    'Your Progress',
-                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).appBarTheme.foregroundColor
+                    const SizedBox(height: 20),
+                    QuickAccessCard(
+                      icon: MingCuteIcons.mgc_book_6_line,
+                      title: 'Civic Education',
+                      description: 'Learn about your rights and responsibilities as a citizen.',
+                      onTap: () => {},
+                      // onTap: () => context.go(AppRouter.civicEducation),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  courseProgressAsync.when(
-                    data: (courseProgress) => ProgressCard(
-                      title: 'Course Completion',
-                      percentage: courseProgress?.percentage ?? 0.0,
+                    QuickAccessCard(
+                      icon: MingCuteIcons.mgc_announcement_line,
+                      title: 'Report an Issue',
+                      description: 'Report incidents of injustice or corruption.',
+                      onTap: () => {},
+                      // onTap: () => context.go(AppRouter.reportIssue),
                     ),
-                    loading: () => const LinearProgressIndicator(),
-                    error: (error, stack) => const Text('Error loading progress'),
-                  ),
-                  const SizedBox(height: 20),
-                  // Featured Courses Section
-                  Text(
-                    'Featured Courses',
-                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).appBarTheme.foregroundColor
+                    QuickAccessCard(
+                      icon: MingCuteIcons.mgc_balance_line,
+                      title: 'Legal Aid',
+                      description: 'Find legal assistance and resources.',
+                      onTap: () => {},
+                      // onTap: () => context.go(AppRouter.legalAid),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  featuredCoursesAsync.when(
-                    data: (courses) {
-                      if (courses.isEmpty) {
-                        // Show empty state if no featured courses
-                        return EmptyCard(
-                          icon: MingCuteIcons.mgc_book_6_line,
-                          title: 'No Featured Courses',
-                          description: 'Featured courses will appear here when available. Check back later for new content!',
+                    const SizedBox(height: 20),
+                    // Progress Section
+                    Text(
+                      'Your Progress',
+                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).appBarTheme.foregroundColor
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    courseProgressAsync.when(
+                      data: (courseProgress) => ProgressCard(
+                        title: 'Course Completion',
+                        percentage: courseProgress?.percentage ?? 0.0,
+                      ),
+                      loading: () => const LinearProgressIndicator(),
+                      error: (error, stack) => const Text('Error loading progress'),
+                    ),
+                    const SizedBox(height: 20),
+                    // Featured Courses Section
+                    Text(
+                      'Featured Courses',
+                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).appBarTheme.foregroundColor
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    featuredCoursesAsync.when(
+                      data: (courses) {
+                        if (courses.isEmpty) {
+                          // Show empty state if no featured courses
+                          return EmptyCard(
+                            icon: MingCuteIcons.mgc_book_6_line,
+                            title: 'No Featured Courses',
+                            description: 'Featured courses will appear here when available. Check back later for new content!',
+                          );
+                        }
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.35, // 35% of screen height
+                          ),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: courses.length,
+                            separatorBuilder: (context, index) => SizedBox(width: 20), // 20 pixels between cards
+                            itemBuilder: (context, index) {
+                              final course = courses[index];
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.5, // 50% of screen width
+                                child: CourseCard(
+                                course: course,
+                                onTap: () => {},
+                                // onTap: () => context.go(AppRouter.courseDetail(course.id)),
+                              ));
+                            },
+                          ),
                         );
-                      }
-                      return ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * 0.35, // 35% of screen height
-                        ),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: courses.length,
-                          separatorBuilder: (context, index) => SizedBox(width: 20), // 20 pixels between cards
-                          itemBuilder: (context, index) {
-                            final course = courses[index];
-                            return SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.5, // 50% of screen width
-                              child: CourseCard(
-                              course: course,
-                              onTap: () => {},
-                              // onTap: () => context.go(AppRouter.courseDetail(course.id)),
-                            ));
-                          },
-                        ),
-                      );
-                    },
-                    loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (error, stack) => Center(child: Text('Error loading courses')),
-                  ),
-                  const SizedBox(height: 20),
-                  // Helpful Tips Section
-                  Text(
-                    'Helpful Tips',
-                    style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).appBarTheme.foregroundColor
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (error, stack) => Center(child: Text('Error loading courses')),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  helpfulTipsAsync.when(
-                    data: (tips) {
-                      if (tips.isEmpty) {
-                        // Show empty state if no tips
-                        return EmptyCard(
-                          icon: MingCuteIcons.mgc_light_line,
-                          title: 'No Helpful Tips',
-                          description: 'Helpful tips will appear here when available. Check back later for new content!',
+                    const SizedBox(height: 20),
+                    // Helpful Tips Section
+                    Text(
+                      'Helpful Tips',
+                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).appBarTheme.foregroundColor
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    helpfulTipsAsync.when(
+                      data: (tips) {
+                        if (tips.isEmpty) {
+                          // Show empty state if no tips
+                          return EmptyCard(
+                            icon: MingCuteIcons.mgc_light_line,
+                            title: 'No Helpful Tips',
+                            description: 'Helpful tips will appear here when available. Check back later for new content!',
+                          );
+                        }
+                        return Column(
+                          children: tips.map((tip) => InfoCard(
+                            title: tip.title,
+                            description: tip.description,
+                            imageUrl: tip.imageUrl,
+                          )).toList(),
                         );
-                      }
-                      return Column(
-                        children: tips.map((tip) => InfoCard(
-                          title: tip.title,
-                          description: tip.description,
-                          imageUrl: tip.imageUrl,
-                        )).toList(),
-                      );
-                    },
-                    loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (error, stack) => Center(child: Text('Error loading tips')),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                      },
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                      error: (error, stack) => Center(child: Text('Error loading tips')),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: const CustomBottomNavBar(),
     );
