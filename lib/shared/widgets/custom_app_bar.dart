@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  final String title;
+  const CustomAppBar({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       title: Text(
-        'MyRights',
+        title,
         style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
           fontWeight: FontWeight.w800
         ),

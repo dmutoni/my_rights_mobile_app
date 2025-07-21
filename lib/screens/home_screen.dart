@@ -20,8 +20,8 @@ class HomeScreen extends ConsumerWidget {
     final helpfulTipsAsync = ref.watch(helpfulTipsProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      appBar: CustomAppBar(title: 'MyRights'),
       body: Column(
         children: [
           Expanded(
