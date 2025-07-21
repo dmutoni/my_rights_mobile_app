@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
+import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/main_provider.dart';
 
@@ -24,35 +26,50 @@ class CustomBottomNavBar extends ConsumerWidget {
             label: 'Home',
             index: 0,
             selectedIndex: selectedIndex,
-            onTap: () => ref.read(selectedBottomNavIndexProvider.notifier).state = 0,
+            onTap: () => {
+              ref.read(selectedBottomNavIndexProvider.notifier).state = 0,
+              context.go(AppRouter.home),
+            },
           ),
           _buildNavItem(
             icon: MingCuteIcons.mgc_book_6_line,
             label: 'Learn',
             index: 1,
             selectedIndex: selectedIndex,
-            onTap: () => ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
+            onTap: () => {
+              ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
+              context.go(AppRouter.learn),
+            },
           ),
           _buildNavItem(
             icon: MingCuteIcons.mgc_announcement_line,
             label: 'Report',
             index: 2,
             selectedIndex: selectedIndex,
-            onTap: () => ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
+            onTap: () => {
+              ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
+              context.go(AppRouter.report),
+            },
           ),
           _buildNavItem(
             icon: MingCuteIcons.mgc_balance_line,
             label: 'Aid',
             index: 3,
             selectedIndex: selectedIndex,
-            onTap: () => ref.read(selectedBottomNavIndexProvider.notifier).state = 3,
+            onTap: () => {
+              ref.read(selectedBottomNavIndexProvider.notifier).state = 3,
+              context.go(AppRouter.aid),
+            },
           ),
           _buildNavItem(
             icon: MingCuteIcons.mgc_user_1_line,
             label: 'Profile',
             index: 4,
             selectedIndex: selectedIndex,
-            onTap: () => ref.read(selectedBottomNavIndexProvider.notifier).state = 4,
+            onTap: () => {
+              ref.read(selectedBottomNavIndexProvider.notifier).state = 4,
+              context.go(AppRouter.profile),
+            },
           ),
         ],
       ),

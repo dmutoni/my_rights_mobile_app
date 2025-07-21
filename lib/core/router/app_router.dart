@@ -16,6 +16,10 @@ class AppRouter {
   static const String forgotPassword = '/forgot-password';
   static const String confirmAccount = '/confirm-account';
   static const String home = '/home';
+  static const String learn = '/learn';
+  static const String report = '/report';
+  static const String aid = '/aid';
+  static const String profile = '/profile';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
