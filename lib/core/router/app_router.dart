@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/screens/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn_screen.dart';
 import 'package:my_rights_mobile_app/screens/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
@@ -61,6 +62,27 @@ class AppRouter {
         path: home,
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: learn,
+        name: 'learn',
+        builder: (context, state) => const LearnScreen(),
+      ),
+      GoRoute(
+        path: '$learn/category/:categoryId',
+        name: 'courseCategory',
+        builder: (context, state) {
+          final categoryId = state.pathParameters['categoryId'];
+          return Center(child: Text('Category ID: $categoryId'));
+        },
+      ),
+      GoRoute(
+        path: '$learn/course/:courseId',
+        name: 'course',
+        builder: (context, state) {
+          final courseId = state.pathParameters['courseId'];
+          return Center(child: Text('Course ID: $courseId'));
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

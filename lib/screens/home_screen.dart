@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
+import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/course_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
@@ -103,10 +105,8 @@ class HomeScreen extends ConsumerWidget {
                             description: 'Featured courses will appear here when available. Check back later for new content!',
                           );
                         }
-                        return ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.35, // 35% of screen height
-                          ),
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.width * 0.35, // 35% of screen height
                           child: ListView.separated(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
@@ -118,8 +118,7 @@ class HomeScreen extends ConsumerWidget {
                                 width: MediaQuery.of(context).size.width * 0.5, // 50% of screen width
                                 child: CourseCard(
                                 course: course,
-                                onTap: () => {},
-                                // onTap: () => context.go(AppRouter.courseDetail(course.id)),
+                                onTap: () => context.go('${AppRouter.learn}/course/${course.id}'),
                               ));
                             },
                           ),
