@@ -1,8 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_rights_mobile_app/provider/organization_provider.dart';
+
 class CustomSearchBar extends ConsumerWidget {
   const CustomSearchBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final searchQuery = ref.watch(searchOrganizationProvider);
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -18,17 +23,14 @@ class CustomSearchBar extends ConsumerWidget {
       ),
       child: TextField(
         onChanged: (value) {
-          ref.read(searchQueryProvider.notifier).state = value;
+          ref.read(searchQuery.notifier).state = value;
         },
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search for organization',
-          hintStyle: TextStyle(
-            color: Color(0xFF999999),
-            fontSize: 16,
-          ),
+          hintStyle: Theme.of(context).inputDecorationTheme.hintStyle,
           prefixIcon: Icon(
             Icons.search,
-            color: Color(0xFF999999),
+            color: Theme.of(context).inputDecorationTheme.hintStyle?.color,
           ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
