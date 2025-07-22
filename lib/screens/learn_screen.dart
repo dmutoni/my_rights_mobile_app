@@ -105,10 +105,10 @@ class LearnScreen extends ConsumerWidget {
                           return GridView.count(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 2.5,
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 2.25,
                             children: categories.map((category) {
                               return CategoryCard(
                                 title: category.name,

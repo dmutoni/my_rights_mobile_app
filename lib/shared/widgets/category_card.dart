@@ -14,22 +14,28 @@ class CategoryCard extends StatelessWidget {
   
   IconData getIconByName(String name) {
     switch (name.toLowerCase().trim().replaceAll(' ', '_')) {
-      case 'education':
-        return MingCuteIcons.mgc_book_5_line;
-      case 'health':
-        return MingCuteIcons.mgc_first_aid_kit_line;
-      case 'employment':
-        return MingCuteIcons.mgc_building_1_line;
-      case 'housing':
-        return MingCuteIcons.mgc_home_3_line;
-      case 'constitutional_law':
+      case 'administrative':
+        return MingCuteIcons.mgc_building_2_line;
+      case 'commercial':
+        return MingCuteIcons.mgc_store_2_line;
+      case 'constitution':
         return MingCuteIcons.mgc_book_6_line;
-      case 'dispute_resolution':
-        return MingCuteIcons.mgc_group_2_line;
-      case 'tax_law':
-        return MingCuteIcons.mgc_balance_line;
-      case 'property_law':
+      case 'contract':
+        return MingCuteIcons.mgc_paper_2_line;
+      case 'criminal':
+        return MingCuteIcons.mgc_auction_line;
+      case 'family':
+        return MingCuteIcons.mgc_user_heart_line;
+      case 'property':
         return MingCuteIcons.mgc_column_line;
+      case 'tort':
+        return MingCuteIcons.mgc_balance_line;
+      case 'labor':
+        return MingCuteIcons.mgc_group_3_line;
+      case 'environmental':
+        return MingCuteIcons.mgc_leaf_line;
+      case 'international':
+        return MingCuteIcons.mgc_globe_line;
       default:
         return MingCuteIcons.mgc_grid_line; // Default icon if no match found
     }
@@ -55,15 +61,15 @@ class CategoryCard extends StatelessWidget {
             children: [
               Icon(
                 getIconByName(title),
-                size: 24,
+                size: 18,
                 color: Theme.of(context).appBarTheme.foregroundColor,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 9,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).appBarTheme.foregroundColor,
                   ),

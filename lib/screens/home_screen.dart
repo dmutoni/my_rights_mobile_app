@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
+import 'package:my_rights_mobile_app/provider/main_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/course_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
@@ -48,22 +49,28 @@ class HomeScreen extends ConsumerWidget {
                       icon: MingCuteIcons.mgc_book_6_line,
                       title: 'Civic Education',
                       description: 'Learn about your rights and responsibilities as a citizen.',
-                      onTap: () => {},
-                      // onTap: () => context.go(AppRouter.civicEducation),
+                      onTap: () => {
+                        ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
+                        context.go(AppRouter.learn)
+                      },
                     ),
                     QuickAccessCard(
                       icon: MingCuteIcons.mgc_announcement_line,
                       title: 'Report an Issue',
                       description: 'Report incidents of injustice or corruption.',
-                      onTap: () => {},
-                      // onTap: () => context.go(AppRouter.reportIssue),
+                      onTap: () => {
+                        ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
+                        context.go(AppRouter.report)
+                      },
                     ),
                     QuickAccessCard(
                       icon: MingCuteIcons.mgc_balance_line,
                       title: 'Legal Aid',
                       description: 'Find legal assistance and resources.',
-                      onTap: () => {},
-                      // onTap: () => context.go(AppRouter.legalAid),
+                      onTap: () => {
+                        ref.read(selectedBottomNavIndexProvider.notifier).state = 3,
+                        context.go(AppRouter.aid)
+                      },
                     ),
                     const SizedBox(height: 20),
                     // Progress Section
