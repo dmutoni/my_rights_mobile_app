@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class CourseProgress {
-  final double percentage;
+  final num percentage;
   final List<String> coursesCompleted;
 
   CourseProgress({
@@ -9,11 +7,10 @@ class CourseProgress {
     required this.coursesCompleted,
   });
 
-  factory CourseProgress.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  factory CourseProgress.fromJson(Map<String, dynamic> json) {
     return CourseProgress(
-      percentage: (data['percentage'] ?? 0.0).toDouble(),
-      coursesCompleted: List<String>.from(data['coursesCompleted'] ?? []),
+      percentage: json['percentage'] ?? 0.0,
+      coursesCompleted: List<String>.from(json['coursesCompleted'] ?? []),
     );
   }
 }

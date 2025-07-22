@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Course {
   final String id;
   final num rating;
@@ -31,22 +29,21 @@ class Course {
     required this.totalLessons,
   });
 
-  factory Course.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
-      id: doc.id,
-      rating: data['rating'] ?? 0,
-      categories: List<String>.from(data['categories'] ?? []),
-      description: data['description'] ?? '',
-      learningObjectives: List<String>.from(data['learningObjectives'] ?? []),
-      featured: data['featured'] ?? false,
-      imageUrl: data['imageUrl'] ?? '',
-      title: data['title'] ?? '',
-      certificateEligible: data['certificateEligible'] ?? false,
-      difficulty: data['difficulty'] ?? '',
-      totalQuestions: data['totalQuestions'] ?? 0,
-      estimatedDurationMinutes: data['estimatedDurationMinutes'] ?? 0,
-      totalLessons: data['totalLessons'] ?? 0,
+      id: json['id'] ?? '',
+      rating: json['rating'] ?? 0,
+      categories: List<String>.from(json['categories'] ?? []),
+      description: json['description'] ?? '',
+      learningObjectives: List<String>.from(json['learningObjectives'] ?? []),
+      featured: json['featured'] ?? false,
+      imageUrl: json['imageUrl'] ?? '',
+      title: json['title'] ?? '',
+      certificateEligible: json['certificateEligible'] ?? false,
+      difficulty: json['difficulty'] ?? '',
+      totalQuestions: json['totalQuestions'] ?? 0,
+      estimatedDurationMinutes: json['estimatedDurationMinutes'] ?? 0,
+      totalLessons: json['totalLessons'] ?? 0,
     );
   }
 }

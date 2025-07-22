@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Tip {
   final String title;
   final String description;
@@ -11,12 +9,11 @@ class Tip {
     required this.imageUrl,
   });
 
-  factory Tip.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  factory Tip.fromJson(Map<String, dynamic> json) {
     return Tip(
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      imageUrl: data['imageUrl'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
     );
   }
 }
