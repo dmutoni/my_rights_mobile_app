@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/models/category.dart';
 import 'package:my_rights_mobile_app/models/course.dart';
 import 'package:my_rights_mobile_app/models/course_progress.dart';
+import 'package:my_rights_mobile_app/models/tip.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 
 final courseProgressProvider = StreamProvider<CourseProgress?>((ref) {
@@ -25,12 +26,12 @@ final featuredCoursesProvider = StreamProvider<List<Course>>((ref) {
           snapshot.docs.map((doc) => Course.fromFirestore(doc)).toList());
 });
 
-final helpfulTipsProvider = StreamProvider<List<Course>>((ref) {
+final helpfulTipsProvider = StreamProvider<List<Tip>>((ref) {
   return FirebaseFirestore.instance
       .collection('tips')
       .snapshots()
       .map((snapshot) => 
-          snapshot.docs.map((doc) => Course.fromFirestore(doc)).toList());
+          snapshot.docs.map((doc) => Tip.fromFirestore(doc)).toList());
 });
 
 final categoriesProvider = StreamProvider<List<Category>>((ref) {
