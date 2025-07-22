@@ -8,6 +8,7 @@ import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
+import 'package:my_rights_mobile_app/screens/aid/organizations_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -83,6 +84,11 @@ class AppRouter {
           final courseId = state.pathParameters['courseId'];
           return Center(child: Text('Course ID: $courseId'));
         },
+      ),
+      GoRoute(
+        path: aid,
+        name: 'aid',
+        builder: (context, state) => const OrganizationScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
