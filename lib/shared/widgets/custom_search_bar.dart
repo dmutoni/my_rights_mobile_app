@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_rights_mobile_app/provider/organization_provider.dart';
 
 class CustomSearchBar extends ConsumerWidget {
   final ValueChanged<String> onChanged;

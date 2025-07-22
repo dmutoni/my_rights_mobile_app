@@ -77,6 +77,7 @@ class OrganizationScreen extends ConsumerWidget {
           ],
         ),
       ),
+      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 }
