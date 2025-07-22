@@ -225,11 +225,33 @@ class FirebaseService {
     }
   }
 
-  static Stream<QuerySnapshot> getCollectionStream(String collection) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream(String collection) {
     return _firestore.collection(collection).snapshots();
   }
 
-  static Future<QuerySnapshot> getCollection(String collection) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> getCollection(String collection) {
     return _firestore.collection(collection).get();
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getDocument({
+    required String collection,
+    required String docId,
+  }) {
+    return _firestore.collection(collection).doc(docId).snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentOrdered({
+    required String collection,
+    required String orderByField,
+  }) {
+    return _firestore.collection(collection).orderBy(orderByField).snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentQuery({
+    required String collection,
+    required String field,
+    required dynamic value,
+  }) {
+    return _firestore.collection(collection).where(field, isEqualTo: value).snapshots();
   }
 }
