@@ -37,3 +37,12 @@ final coursesProvider = StreamProvider<List<Course>>((ref) {
     .map((snapshot) =>
         snapshot.docs.map((doc) => Course.fromJson({...doc.data(), 'id': doc.id})).toList());
 });
+
+final coursesByCategoryProvider = StreamProvider.family<List<Course>, String>((ref, categoryId) {
+  return FirebaseService.getDocumentArrayQuery(
+    collection: 'courses',
+    field: 'categories',
+    value: categoryId,
+  ).map((snapshot) =>
+      snapshot.docs.map((doc) => Course.fromJson({...doc.data(), 'id': doc.id})).toList());
+});

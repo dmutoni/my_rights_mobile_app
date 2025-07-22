@@ -254,4 +254,12 @@ class FirebaseService {
   }) {
     return _firestore.collection(collection).where(field, isEqualTo: value).snapshots();
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentArrayQuery({
+    required String collection,
+    required String field,
+    required dynamic value,
+  }) {
+    return _firestore.collection(collection).where(field, arrayContains: value).snapshots();
+  }
 }

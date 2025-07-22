@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn/category_courses_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/learn_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
@@ -72,8 +73,8 @@ class AppRouter {
         path: '$learn/category/:categoryId',
         name: 'courseCategory',
         builder: (context, state) {
-          final categoryId = state.pathParameters['categoryId'];
-          return Center(child: Text('Category ID: $categoryId'));
+          final categoryId = state.pathParameters['categoryId'] ?? '';
+          return CategoryCoursesScreen(categoryId: categoryId);
         },
       ),
       GoRoute(
