@@ -7,24 +7,21 @@ class CustomSearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchQuery = ref.watch(searchOrganizationProvider);
     return Container(
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).inputDecorationTheme.fillColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: TextField(
-        onChanged: (value) {
-          ref.read(searchQuery.notifier).state = value;
-        },
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: 'Search for organization',
           hintStyle: Theme.of(context).inputDecorationTheme.hintStyle,

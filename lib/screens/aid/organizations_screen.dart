@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_list.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_search_bar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
-import 'package:my_rights_mobile_app/models/organization.dart';
-import 'package:my_rights_mobile_app/providers/organization_provider.dart';
+import 'package:my_rights_mobile_app/provider/organization_provider.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 
@@ -21,7 +20,9 @@ class OrganizationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomSearchBar(),
+            CustomSearchBar(onChanged: (value) {
+              ref.read(searchOrganizationProvider.notifier).state = value;
+            }),
             Expanded(
               child: organizationsAsync.when(
                 data: (organizations) {
