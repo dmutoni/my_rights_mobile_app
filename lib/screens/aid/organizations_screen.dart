@@ -6,6 +6,10 @@ import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 import 'package:my_rights_mobile_app/provider/organization_provider.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_rights_mobile_app/core/router/app_router.dart';
+import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
+
 
 class OrganizationScreen extends ConsumerWidget {
   const OrganizationScreen({super.key});
@@ -35,7 +39,7 @@ class OrganizationScreen extends ConsumerWidget {
                   }
 
                   return ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(left: 20, bottom: 24),
                     itemCount: organizations.length,
                     itemBuilder: (context, index) {
                       final organization = organizations[index];
@@ -43,7 +47,9 @@ class OrganizationScreen extends ConsumerWidget {
                         icon: MingCuteIcons.mgc_building_1_line,
                         title: organization.name,
                         subtitle: organization.location,
-                        onTap: () {},
+                        onTap: () {
+                          context.go('${AppRouter.aid}/${organization.id}');
+                        }
                       );
                     },
                   );
