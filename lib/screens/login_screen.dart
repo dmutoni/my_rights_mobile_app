@@ -37,8 +37,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       // Check if login was successful
       final authState = ref.read(authProvider);
       if (authState.isAuthenticated) {
-        // Navigate to home or dashboard
-        context.go('/home');
+        // Navigate to incident report screen
+        context.go(AppRouter.incidentReport);
       } else if (authState.error != null) {
         // Show error message
         if (mounted) {

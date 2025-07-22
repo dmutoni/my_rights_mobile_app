@@ -7,6 +7,7 @@ import 'package:my_rights_mobile_app/screens/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/welcome_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -16,6 +17,7 @@ class AppRouter {
   static const String forgotPassword = '/forgot-password';
   static const String confirmAccount = '/confirm-account';
   static const String home = '/home';
+  static const String incidentReport = '/incident-report';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -57,6 +59,11 @@ class AppRouter {
         path: home,
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: incidentReport,
+        name: 'incidentReport',
+        builder: (context, state) => const AllReportsScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
