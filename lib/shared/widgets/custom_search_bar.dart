@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/provider/organization_provider.dart';
 
 class CustomSearchBar extends ConsumerWidget {
-  const CustomSearchBar({super.key});
+  final ValueChanged<String> onChanged;
+  const CustomSearchBar({super.key, required this.onChanged});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
