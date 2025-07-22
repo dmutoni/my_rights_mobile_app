@@ -49,13 +49,14 @@ class InfoCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 16),
-          SizedBox(
-            width: 80,
-            height: 80,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
             child: Image.network(
               imageUrl,
+              width: 80,
+              height: 80,
               fit: BoxFit.cover,
-            )
+            ),
           ),
         ],
       ),

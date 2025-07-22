@@ -27,7 +27,7 @@ final featuredCoursesProvider = StreamProvider<List<Course>>((ref) {
 
 final helpfulTipsProvider = StreamProvider<List<Course>>((ref) {
   return FirebaseFirestore.instance
-      .collection('helpful_tips')
+      .collection('tips')
       .snapshots()
       .map((snapshot) => 
           snapshot.docs.map((doc) => Course.fromFirestore(doc)).toList());

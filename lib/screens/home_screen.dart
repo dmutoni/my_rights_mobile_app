@@ -156,6 +156,7 @@ class HomeScreen extends ConsumerWidget {
                           );
                         }
                         return Column(
+                          spacing: 16,
                           children: tips.map((tip) => InfoCard(
                             title: tip.title,
                             description: tip.description,
