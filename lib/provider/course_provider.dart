@@ -46,7 +46,6 @@ final categoriesProvider = StreamProvider<List<Category>>((ref) {
 final coursesProvider = StreamProvider<List<Course>>((ref) {
   return FirebaseFirestore.instance
     .collection('courses')
-    .orderBy('createdAt', descending: true)
     .snapshots()
     .map((snapshot) =>
         snapshot.docs.map((doc) => Course.fromFirestore(doc)).toList());

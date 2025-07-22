@@ -113,7 +113,7 @@ class HomeScreen extends ConsumerWidget {
                           );
                         }
                         return SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.35, // 35% of screen height
+                          height: MediaQuery.of(context).size.width * 0.75, // 75% of screen height
                           child: ListView.separated(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,

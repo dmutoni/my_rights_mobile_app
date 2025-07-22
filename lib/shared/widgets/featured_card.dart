@@ -78,6 +78,8 @@ class FeaturedCard extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
