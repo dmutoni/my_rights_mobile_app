@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_list.dart';
-import '../../provider/auth_provider.dart';
 import '../../provider/incident_report_provider.dart';
 import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
@@ -22,12 +21,14 @@ class AllReportsScreen extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
         child: reports.isEmpty
-            ? EmptyCard(
-                icon: Icons.description_outlined,
-                title: 'No reports found',
-                description: 'You have not submitted any reports yet.',
-              )
-            : Column(
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.2),
+                child: EmptyCard(
+                  icon: Icons.description_outlined,
+                  title: 'No reports found',
+                  description: 'You have not submitted any reports yet.',
+                )
+            ) : Column(
                 children: [
                   Expanded(
                     child: CustomList(
@@ -62,9 +63,9 @@ class AllReportsScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add),
-        label: const Text('New Report',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+        label: Text('New Report',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
         onPressed: () {
           context.go('/incident-report/report-abuse');
         },

@@ -93,6 +93,8 @@ class CourseDetailScreen extends ConsumerWidget {
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
                                         ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),

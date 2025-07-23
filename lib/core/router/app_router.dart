@@ -73,22 +73,24 @@ class AppRouter {
         path: learn,
         name: 'learn',
         builder: (context, state) => const LearnScreen(),
-      ),
-      GoRoute(
-        path: '$learn/category/:categoryId',
-        name: 'courseCategory',
-        builder: (context, state) {
-          final categoryId = state.pathParameters['categoryId'] ?? '';
-          return CategoryCoursesScreen(categoryId: categoryId);
-        },
-      ),
-      GoRoute(
-        path: '$learn/course/:courseId',
-        name: 'course',
-        builder: (context, state) {
-          final courseId = state.pathParameters['courseId'] ?? '';
-          return CourseDetailScreen(courseId: courseId);
-        },
+        routes: [
+          GoRoute(
+            path: '/category/:categoryId',
+            name: 'courseCategory',
+            builder: (context, state) {
+              final categoryId = state.pathParameters['categoryId'] ?? '';
+              return CategoryCoursesScreen(categoryId: categoryId);
+            },
+          ),
+          GoRoute(
+            path: '/course/:courseId',
+            name: 'course',
+            builder: (context, state) {
+              final courseId = state.pathParameters['courseId'] ?? '';
+              return CourseDetailScreen(courseId: courseId);
+            },
+          ),
+        ]
       ),
       GoRoute(
         path: incidentReport,
