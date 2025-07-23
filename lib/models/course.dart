@@ -1,6 +1,3 @@
-import 'package:my_rights_mobile_app/models/lesson.dart';
-import 'package:my_rights_mobile_app/models/resource.dart';
-
 class Course {
   final String id;
   final num rating;
@@ -15,8 +12,6 @@ class Course {
   final int totalQuestions;
   final num estimatedDurationMinutes;
   final int totalLessons;
-  final List<Lesson> lessons;
-  final List<Resource> resources; 
 
   Course({
     required this.id,
@@ -31,9 +26,7 @@ class Course {
     required this.difficulty,
     required this.totalQuestions,
     required this.estimatedDurationMinutes,
-    required this.totalLessons,
-    this.lessons = const [],
-    this.resources = const [],
+    required this.totalLessons
   });
 
   factory Course.fromJson(Map<String, dynamic> json) {
@@ -50,9 +43,7 @@ class Course {
       difficulty: json['difficulty'] ?? '',
       totalQuestions: json['totalQuestions'] ?? 0,
       estimatedDurationMinutes: json['estimatedDurationMinutes'] ?? 0,
-      totalLessons: json['totalLessons'] ?? 0,
-      lessons: (json['lessons'] as List<dynamic>?)?.map((lesson) => Lesson.fromJson(lesson)).toList() ?? [],
-      resources: (json['resources'] as List<dynamic>?)?.map((resource) => Resource.fromJson(resource)).toList() ?? [],
+      totalLessons: json['totalLessons'] ?? 0
     );
   }
 }

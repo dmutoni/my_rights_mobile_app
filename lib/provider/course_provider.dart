@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/models/category.dart';
+import 'package:my_rights_mobile_app/models/chapter.dart';
 import 'package:my_rights_mobile_app/models/course.dart';
 import 'package:my_rights_mobile_app/models/course_progress.dart';
+import 'package:my_rights_mobile_app/models/lesson.dart';
+import 'package:my_rights_mobile_app/models/quiz.dart';
 import 'package:my_rights_mobile_app/models/tip.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 import 'package:my_rights_mobile_app/service/firebase_service.dart';
@@ -49,53 +52,23 @@ final coursesByCategoryProvider = StreamProvider.family<List<Course>, String>((r
 
 final courseDetailProvider = StreamProvider.family<Course?, String>((ref, courseId) {
   return FirebaseService.getDocument(collection: 'courses', docId: courseId)
-    .asyncMap((doc) async {
-      if (!doc.exists || doc.data() == null) {
-        return null;
-      }
-      
-      Map<String, dynamic> data = {
-        ...doc.data()!,
-        'id': doc.id,
-      };
+      .map((doc) => doc.exists ? Course.fromJson({...doc.data()!, 'id': doc.id}) : null);
+});
 
-      // Fetch lessons
-      final lessonsSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons');
+final courseLessonsProvider = StreamProvider.family<List<Lesson>, String>((ref, courseId) {
+  return FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons')
+      .map((snapshot) => 
+          snapshot.docs.map((doc) => Lesson.fromJson({...doc.data(), 'id': doc.id})).toList());
+});
 
-      final lessons = <Map<String, dynamic>>[];
-      final chapters = <Map<String, dynamic>>[];
-      final quizzes = <Map<String, dynamic>>[];
+final lessonChaptersProvider = StreamProvider.family<List<Chapter>, ({String courseId, String lessonId})>((ref, params) {
+  return FirebaseService.getInnerDocument(collection: 'courses', docId: params.courseId, innerCollection: 'lessons', innerDocId: params.lessonId, anotherCollection: 'chapters', orderByField: 'order')
+      .map((snapshot) => 
+          snapshot.docs.map((doc) => Chapter.fromJson({...doc.data(), 'id': doc.id})).toList());
+});
 
-      for (var lessonDoc in lessonsSnapshot.docs) {
-        // Fetch chapters for this lesson
-        final chaptersSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'chapters');
-
-        // Fetch quizzes for this lesson
-        final quizzesSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'quiz');
-
-        for (var chapterDoc in chaptersSnapshot.docs) {
-          chapters.add({
-            ...chapterDoc.data(),
-            'id': chapterDoc.id,
-          });
-        }
-        
-        for (var quizDoc in quizzesSnapshot.docs) {
-          quizzes.add({
-            ...quizDoc.data(),
-            'id': quizDoc.id,
-          });
-        }
-
-        lessons.add({
-          ...lessonDoc.data(),
-          'id': lessonDoc.id,
-          'chapters': chapters,
-          'quizzes': quizzes,
-        });
-      }
-
-      data['lessons'] = lessons;
-      return Course.fromJson(data);
-    });
+final lessonQuizProvider = StreamProvider.family<List<Quiz>, ({String courseId, String lessonId})>((ref, params) {
+  return FirebaseService.getInnerDocument(collection: 'courses', docId: params.courseId, innerCollection: 'lessons', innerDocId: params.lessonId, anotherCollection: 'quiz')
+      .map((snapshot) => 
+          snapshot.docs.map((doc) => Quiz.fromJson({...doc.data(), 'id': doc.id})).toList());
 });

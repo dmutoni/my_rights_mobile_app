@@ -16,6 +16,7 @@ class CourseDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final courseAsync = ref.watch(courseDetailProvider(courseId));
+    final lessonsAsync = ref.watch(courseLessonsProvider(courseId));
     final courseProgressAsync = ref.watch(courseProgressProvider);
 
     return Scaffold(
@@ -128,24 +129,28 @@ class CourseDetailScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 16),
                                   // Lessons List
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: course.lessons.length,
-                                    itemBuilder: (context, index) {
-                                      final lesson = course.lessons[index];
-                                      return Padding(
-                                        padding: const EdgeInsets.only(right: 4.0),
-                                        child: CustomListItem(
-                                          icon: MingCuteIcons.mgc_book_6_line,
-                                          title: lesson.title,
-                                          subtitle: lesson.description,
-                                          onTap: () => {
-                                          context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
-                                          },
-                                        ),
-                                      );
-                                    },
+                                  lessonsAsync.when(
+                                    data: (lessons) => ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: lessons.length,
+                                      itemBuilder: (context, index) {
+                                        final lesson = lessons[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.only(right: 4.0),
+                                          child: CustomListItem(
+                                            icon: MingCuteIcons.mgc_book_6_line,
+                                            title: lesson.title,
+                                            subtitle: lesson.description,
+                                            onTap: () => {
+                                            context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    loading: () => const Center(child: CircularProgressIndicator()),
+                                    error: (error, stack) => Center(child: Text('Error loading lessons')),
                                   ),
                                   const SizedBox(height: 16),
                                   // Overall Progress
