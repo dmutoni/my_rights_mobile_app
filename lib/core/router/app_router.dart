@@ -8,6 +8,7 @@ import 'package:my_rights_mobile_app/screens/learn/course_detail_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/learn_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn/lesson_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
@@ -89,6 +90,28 @@ class AppRouter {
               final courseId = state.pathParameters['courseId'] ?? '';
               return CourseDetailScreen(courseId: courseId);
             },
+            routes: [
+              GoRoute(
+                path: 'lesson/:lessonId',
+                name: 'lesson',
+                builder: (context, state) {
+                  final courseId = state.pathParameters['courseId'] ?? '';
+                  final lessonId = state.pathParameters['lessonId'] ?? '';
+                  return LessonScreen(courseId: courseId, lessonId: lessonId);
+                },
+                routes: [
+                  // GoRoute(
+                  //   path: 'quiz',
+                  //   name: 'quiz',
+                  //   builder: (context, state) {
+                  //     final courseId = state.pathParameters['courseId'] ?? '';
+                  //     final lessonId = state.pathParameters['lessonId'] ?? '';
+                  //     return QuizScreen(courseId: courseId, lessonId: lessonId);
+                  //   },
+                  // ),
+                ],
+              ),
+            ],
           ),
         ]
       ),

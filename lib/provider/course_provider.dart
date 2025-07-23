@@ -72,3 +72,7 @@ final lessonQuizProvider = StreamProvider.family<List<Quiz>, ({String courseId, 
       .map((snapshot) => 
           snapshot.docs.map((doc) => Quiz.fromJson({...doc.data(), 'id': doc.id})).toList());
 });
+
+final currentChapterProvider = StateProvider<int>((ref) => 0);
+final currentQuestionProvider = StateProvider<int>((ref) => 0);
+final selectedAnswersProvider = StateProvider<Map<int, int>>((ref) => {});

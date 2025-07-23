@@ -40,6 +40,8 @@ dependencies:
   firebase_storage: ^12.4.9
   firebase_messaging: ^15.2.9
   ming_cute_icons: ^0.0.7
+  audioplayers: ^6.5.0
+  video_player: ^2.10.0
 
 dev_dependencies:
   flutter_test:

@@ -1,9 +1,9 @@
 class Content {
-  final String audioUrl;
+  final String? audioUrl;
   final List<ContentImage> images;
   final List<String> keyPoints;
   final String text;
-  final String videoUrl;
+  final String? videoUrl;
 
   Content({
     required this.audioUrl,

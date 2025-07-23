@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
+import 'package:my_rights_mobile_app/provider/main_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_list.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/progress_card.dart';
@@ -26,7 +27,10 @@ class CourseDetailScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.foregroundColor),
-          onPressed: () => context.go(AppRouter.learn),
+          onPressed: () => {
+            ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
+            context.go(AppRouter.learn)
+          },
         ),
         title: Text(
           courseAsync.when(
@@ -138,14 +142,43 @@ class CourseDetailScreen extends ConsumerWidget {
                                         final lesson = lessons[index];
                                         return Padding(
                                           padding: const EdgeInsets.only(right: 4.0),
-                                          child: CustomListItem(
-                                            icon: MingCuteIcons.mgc_book_6_line,
-                                            title: lesson.title,
-                                            subtitle: lesson.description,
-                                            onTap: () => {
-                                            context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
-                                            },
-                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              // Lesson Item
+                                              CustomListItem(
+                                                icon: MingCuteIcons.mgc_book_6_line,
+                                                title: lesson.title,
+                                                subtitle: lesson.description,
+                                                onTap: () => {
+                                                context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
+                                                },
+                                              ),
+                                              // Add the estimated time if available
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 56.0, bottom: 8.0),
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.access_time,
+                                                      size: 14,
+                                                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      '${lesson.estimatedDurationMinutes} min',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                            ],
+                                          )
                                         );
                                       },
                                     ),
