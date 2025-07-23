@@ -12,14 +12,24 @@ class ConfirmSubmitDialog extends StatelessWidget {
       title: const Text('Submit Report'),
       content: const Text('Are you sure you want to submit this report? Once submitted, you will not be able to make any further changes.'),
       actions: [
-        CustomButton(
-          text: 'Cancel',
-          type: ButtonType.secondary,
-          onPressed: onCancel,
-        ),
-        CustomButton(
-          text: 'Submit',
-          onPressed: onSubmit,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: CustomButton(
+                text: 'Cancel',
+                type: ButtonType.secondary,
+                onPressed: onCancel,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomButton(
+                text: 'Submit',
+                onPressed: onSubmit,
+              ),
+            ),
+          ],
         ),
       ],
     );

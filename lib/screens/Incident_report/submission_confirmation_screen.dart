@@ -5,6 +5,8 @@ import '../../provider/incident_report_provider.dart';
 import 'all_reports_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/router/app_router.dart';
 
 class SubmissionConfirmationScreen extends ConsumerWidget {
   const SubmissionConfirmationScreen({super.key});
@@ -63,12 +65,7 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
               text: 'Back to My Reports',
               onPressed: () {
                 ref.read(incidentReportProvider.notifier).clearCurrentReport();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const AllReportsScreen(),
-                  ),
-                  (route) => false,
-                );
+                context.go(AppRouter.incidentReport);
               },
             ),
           ],
