@@ -6,6 +6,8 @@ import 'report_abuse_screen.dart';
 import '../../provider/incident_report_provider.dart';
 import 'view_report_screen.dart';
 import '../../models/incident_report_model.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import '../../provider/main_provider.dart';
 
 class AllReportsScreen extends ConsumerWidget {
   const AllReportsScreen({super.key});
@@ -15,6 +17,10 @@ class AllReportsScreen extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final initials = user?.initials ?? '--';
     final reports = ref.watch(userReportsProvider);
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -91,6 +97,7 @@ class AllReportsScreen extends ConsumerWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

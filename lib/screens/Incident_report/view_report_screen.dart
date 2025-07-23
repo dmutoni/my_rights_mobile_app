@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../shared/widgets/custom_list.dart';
 import '../../models/incident_report_model.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../provider/main_provider.dart';
 
-class ViewReportScreen extends StatelessWidget {
+class ViewReportScreen extends ConsumerWidget {
   final IncidentReport report;
   const ViewReportScreen({super.key, required this.report});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text(report.title),
@@ -96,6 +103,7 @@ class ViewReportScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

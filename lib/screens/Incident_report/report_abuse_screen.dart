@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../shared/widgets/custom_list.dart';
 import 'report_incident_screen.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../provider/main_provider.dart';
 
-class ReportAbuseScreen extends StatelessWidget {
+class ReportAbuseScreen extends ConsumerWidget {
   const ReportAbuseScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
     void goToForm() {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const ReportIncidentScreen()),
@@ -67,6 +74,7 @@ class ReportAbuseScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

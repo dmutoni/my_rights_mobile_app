@@ -7,6 +7,8 @@ import '../../shared/widgets/custom_text_fields.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
 import 'review_report_screen.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import '../../provider/main_provider.dart';
 
 class ReportIncidentScreen extends ConsumerStatefulWidget {
   const ReportIncidentScreen({super.key});
@@ -138,6 +140,10 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
   Widget build(BuildContext context) {
     final isLoading = ref.watch(reportLoadingProvider);
     final error = ref.watch(reportErrorProvider);
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
 
     // Show error if any
     if (error != null) {
@@ -254,6 +260,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
           ),
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 } 

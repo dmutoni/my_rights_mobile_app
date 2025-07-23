@@ -6,6 +6,8 @@ import 'confirm_submit_dialog.dart';
 import 'submission_confirmation_screen.dart';
 import '../../models/incident_report_model.dart';
 import 'report_incident_screen.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import '../../provider/main_provider.dart';
 
 class ReviewReportScreen extends ConsumerWidget {
   const ReviewReportScreen({super.key});
@@ -14,9 +16,14 @@ class ReviewReportScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final report = ref.watch(currentReportProvider);
     final notifier = ref.read(incidentReportProvider.notifier);
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
     if (report == null) {
       return const Scaffold(
         body: Center(child: Text('No report to review.')),
+        bottomNavigationBar: CustomBottomNavBar(),
       );
     }
 
@@ -121,6 +128,7 @@ class ReviewReportScreen extends ConsumerWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
 import 'all_reports_screen.dart';
+import '../../shared/widgets/custom_bottom_navbar.dart';
+import '../../provider/main_provider.dart';
 
 class SubmissionConfirmationScreen extends ConsumerWidget {
   const SubmissionConfirmationScreen({super.key});
@@ -10,9 +12,14 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final report = ref.watch(currentReportProvider);
+    // Set the active tab to 'Report' (index 2)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
+    });
     if (report == null) {
       return const Scaffold(
         body: Center(child: Text('No submission found.')),
+        bottomNavigationBar: CustomBottomNavBar(),
       );
     }
     return Scaffold(
@@ -67,6 +74,7 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
