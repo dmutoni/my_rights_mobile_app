@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_rights_mobile_app/screens/confirm_account_screen.dart';
-import 'package:my_rights_mobile_app/screens/forgot_password_screen.dart';
+import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
+import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
-import 'package:my_rights_mobile_app/screens/login_screen.dart';
-import 'package:my_rights_mobile_app/screens/signup_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn/learn_screen.dart';
+import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
+import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
+import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
 
@@ -17,6 +19,10 @@ class AppRouter {
   static const String forgotPassword = '/forgot-password';
   static const String confirmAccount = '/confirm-account';
   static const String home = '/home';
+  static const String learn = '/learn';
+  static const String report = '/report';
+  static const String aid = '/aid';
+  static const String profile = '/profile';
   static const String incidentReport = '/incident-report';
 
   static final GoRouter router = GoRouter(
@@ -59,6 +65,27 @@ class AppRouter {
         path: home,
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: learn,
+        name: 'learn',
+        builder: (context, state) => const LearnScreen(),
+      ),
+      GoRoute(
+        path: '$learn/category/:categoryId',
+        name: 'courseCategory',
+        builder: (context, state) {
+          final categoryId = state.pathParameters['categoryId'];
+          return Center(child: Text('Category ID: $categoryId'));
+        },
+      ),
+      GoRoute(
+        path: '$learn/course/:courseId',
+        name: 'course',
+        builder: (context, state) {
+          final courseId = state.pathParameters['courseId'];
+          return Center(child: Text('Course ID: $courseId'));
+        },
       ),
       GoRoute(
         path: incidentReport,
