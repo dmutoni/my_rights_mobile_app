@@ -9,6 +9,9 @@ import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
+import 'package:my_rights_mobile_app/models/incident_report_model.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -89,6 +92,26 @@ class AppRouter {
         path: incidentReport,
         name: 'incidentReport',
         builder: (context, state) => const AllReportsScreen(),
+        routes: [
+          GoRoute(
+            path: 'report-abuse',
+            name: 'reportAbuse',
+            builder: (context, state) => const ReportAbuseScreen(),
+          ),
+          GoRoute(
+            path: 'view-report',
+            name: 'viewReport',
+            builder: (context, state) {
+              final report = state.extra as IncidentReport?;
+              if (report == null) {
+                return Scaffold(
+                  body: Center(child: Text('No report provided.')),
+                );
+              }
+              return ViewReportScreen(report: report);
+            },
+          ),
+        ],
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

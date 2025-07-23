@@ -4,6 +4,8 @@ import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../provider/main_provider.dart';
+import '../../shared/widgets/custom_app_bar.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewReportScreen extends ConsumerWidget {
   final IncidentReport report;
@@ -11,14 +13,8 @@ class ViewReportScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Set the active tab to 'Report' (index 2)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
-    });
     return Scaffold(
-      appBar: AppBar(
-        title: Text(report.title),
-      ),
+      appBar: CustomAppBar(title: report.title),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView(

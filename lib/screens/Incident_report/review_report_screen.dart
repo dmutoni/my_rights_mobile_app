@@ -8,6 +8,10 @@ import '../../models/incident_report_model.dart';
 import 'report_incident_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
+import '../../shared/widgets/custom_app_bar.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/router/app_router.dart';
+import '../../shared/widgets/empty_card.dart';
 
 class ReviewReportScreen extends ConsumerWidget {
   const ReviewReportScreen({super.key});
@@ -16,21 +20,22 @@ class ReviewReportScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final report = ref.watch(currentReportProvider);
     final notifier = ref.read(incidentReportProvider.notifier);
-    // Set the active tab to 'Report' (index 2)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
-    });
     if (report == null) {
       return const Scaffold(
-        body: Center(child: Text('No report to review.')),
+        body: Center(
+          child: EmptyCard(
+            icon: Icons.description_outlined,
+            title: 'No report to review.',
+            description:
+                'There is no report available for review at this time.',
+          ),
+        ),
         bottomNavigationBar: CustomBottomNavBar(),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Review Report'),
-      ),
+      appBar: CustomAppBar(title: 'Review Report'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView(
@@ -91,7 +96,7 @@ class ReviewReportScreen extends ConsumerWidget {
                     text: 'Edit',
                     type: ButtonType.secondary,
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      context.go('${AppRouter.incidentReport}/report-incident');
                     },
                   ),
                 ),
@@ -108,16 +113,11 @@ class ReviewReportScreen extends ConsumerWidget {
                         ),
                       );
                       if (confirmed == true && context.mounted) {
-                        // Update status and navigate to confirmation
                         await notifier.updateReportStatus(
                             report.id, IncidentStatus.submitted);
                         if (context.mounted) {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const SubmissionConfirmationScreen(),
-                            ),
-                          );
+                          context.go(
+                              '${AppRouter.incidentReport}/submission-confirmation');
                         }
                       }
                     },

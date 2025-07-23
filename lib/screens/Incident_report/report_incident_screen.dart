@@ -9,6 +9,9 @@ import '../../provider/incident_report_provider.dart';
 import 'review_report_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
+import '../../shared/widgets/custom_app_bar.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/router/app_router.dart';
 
 class ReportIncidentScreen extends ConsumerStatefulWidget {
   const ReportIncidentScreen({super.key});
@@ -121,11 +124,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
 
       if (mounted) {
         // Navigate to review screen
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => const ReviewReportScreen(),
-          ),
-        );
+        context.go('${AppRouter.incidentReport}/review-report');
       }
     } catch (e) {
       if (mounted) {
@@ -156,9 +155,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Report an incident'),
-      ),
+      appBar: CustomAppBar(title: 'Report an incident'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(

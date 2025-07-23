@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../shared/widgets/custom_list.dart';
-import 'report_incident_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../provider/main_provider.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/router/app_router.dart';
 
 class ReportAbuseScreen extends ConsumerWidget {
   const ReportAbuseScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Set the active tab to 'Report' (index 2)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
-    });
     void goToForm() {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ReportIncidentScreen()),
-      );
+      context.go('${AppRouter.incidentReport}/report-incident');
     }
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -31,7 +25,7 @@ class ReportAbuseScreen extends ConsumerWidget {
         title: const Text('Report Abuse',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Column(

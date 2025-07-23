@@ -7,6 +7,8 @@ import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
+import '../../shared/widgets/custom_app_bar.dart';
+import '../../shared/widgets/empty_card.dart';
 
 class SubmissionConfirmationScreen extends ConsumerWidget {
   const SubmissionConfirmationScreen({super.key});
@@ -15,19 +17,21 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final report = ref.watch(currentReportProvider);
     // Set the active tab to 'Report' (index 2)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(selectedBottomNavIndexProvider.notifier).state = 2;
-    });
     if (report == null) {
       return const Scaffold(
-        body: Center(child: Text('No submission found.')),
+        body: Center(
+          child: EmptyCard(
+            icon: Icons.description_outlined,
+            title: 'No submission found.',
+            description:
+                'There is no submission available to confirm at this time.',
+          ),
+        ),
         bottomNavigationBar: CustomBottomNavBar(),
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Submission Confirmation'),
-      ),
+      appBar: CustomAppBar(title: 'Submission Confirmation'),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
