@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../shared/widgets/custom_list.dart';
+import '../../models/incident_report_model.dart';
 
 class ViewReportScreen extends StatelessWidget {
-  const ViewReportScreen({super.key});
+  final IncidentReport report;
+  const ViewReportScreen({super.key, required this.report});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Incident Report'),
+        title: Text(report.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -24,64 +26,73 @@ class ViewReportScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.orange,
+                    color: report.status == IncidentStatus.submitted
+                        ? Colors.green
+                        : report.status == IncidentStatus.underReview
+                            ? Colors.orange
+                            : report.status == IncidentStatus.resolved
+                                ? Colors.blue
+                                : Colors.red,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text('Under Review',
-                      style: TextStyle(color: Colors.white)),
+                  child: Text(report.status.name,
+                      style: const TextStyle(color: Colors.white)),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text('Incident Type: Land Dispute'),
-                Text('Location: Kigali'),
+              children: [
+                Text('Incident Type: ${report.title}'),
+                Text('Location: ${report.location}'),
               ],
             ),
             const SizedBox(height: 8),
-            const Text('Date: 2024-01-15'),
+            Text('Date: ${report.date.toLocal().toString().split(' ')[0]}'),
             const SizedBox(height: 16),
             const Text('Details',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            const Text(
-                'The dispute involves a disagreement over land boundaries between two neighboring properties. The issue has been ongoing for several months, causing significant tension between the parties involved. Both parties claim ownership based on historical documents and local agreements, leading to conflicting interpretations of the land boundaries.'),
+            Text(report.description),
             const SizedBox(height: 16),
             const Text('Evidence',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             CustomList(
               items: [
-                CustomListItem(
-                  icon: Icons.photo_library_outlined,
-                  title: 'Photo Evidence',
-                  onTap: () {},
-                ),
-                CustomListItem(
-                  icon: Icons.videocam_outlined,
-                  title: 'Video Evidence',
-                  onTap: () {},
-                ),
-                CustomListItem(
-                  icon: Icons.mic_none_outlined,
-                  title: 'Audio Evidence',
-                  onTap: () {},
-                ),
+                if (report.photoUrls.isNotEmpty)
+                  CustomListItem(
+                    icon: Icons.photo_library_outlined,
+                    title: 'Photo Evidence',
+                    onTap: () {},
+                  ),
+                if (report.videoUrls.isNotEmpty)
+                  CustomListItem(
+                    icon: Icons.videocam_outlined,
+                    title: 'Video Evidence',
+                    onTap: () {},
+                  ),
+                if (report.audioUrls.isNotEmpty)
+                  CustomListItem(
+                    icon: Icons.mic_none_outlined,
+                    title: 'Audio Evidence',
+                    onTap: () {},
+                  ),
               ],
             ),
             const SizedBox(height: 16),
-            Container(
-              height: 160,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/welcome_screen_avatar.png'),
-                  fit: BoxFit.cover,
+            if (report.photoUrls.isNotEmpty)
+              Container(
+                height: 160,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(report.photoUrls.first),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

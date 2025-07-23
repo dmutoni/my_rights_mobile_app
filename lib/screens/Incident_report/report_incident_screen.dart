@@ -17,6 +17,7 @@ class ReportIncidentScreen extends ConsumerStatefulWidget {
 
 class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
   final _dateController = TextEditingController();
   final _locationController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -28,6 +29,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
 
   @override
   void dispose() {
+    _titleController.dispose();
     _dateController.dispose();
     _locationController.dispose();
     _descriptionController.dispose();
@@ -94,6 +96,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     try {
       // Create the report
       await notifier.createReport(
+        title: _titleController.text,
         date: DateTime.parse(_dateController.text),
         location: _locationController.text,
         description: _descriptionController.text,
@@ -156,6 +159,21 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              CustomTextField(
+                label: 'Title',
+                hint: 'Enter a short title for the incident',
+                controller: _titleController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a title';
+                  }
+                  if (value.length < 5) {
+                    return 'Title should be at least 5 characters';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
               CustomTextField(
                 label: 'Date of Incident',
                 hint: 'Select Date',

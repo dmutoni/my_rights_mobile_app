@@ -54,25 +54,24 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
 
   // Create a new report
   Future<void> createReport({
+    required String title,
     required DateTime date,
     required String location,
     required String description,
     required bool isAnonymous,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
-
     try {
       final user = ref.read(authProvider).user;
       if (user == null) throw Exception('User not authenticated');
-
       final report = IncidentReport.create(
         userId: user.id,
+        title: title,
         date: date,
         location: location,
         description: description,
         isAnonymous: isAnonymous,
       );
-
       final createdReport = await IncidentReportService.createReport(report);
       state = state.copyWith(
         isLoading: false,

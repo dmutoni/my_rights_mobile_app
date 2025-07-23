@@ -10,6 +10,7 @@ enum IncidentStatus {
 class IncidentReport {
   final String id;
   final String userId;
+  final String title;
   final DateTime date;
   final String location;
   final String description;
@@ -25,6 +26,7 @@ class IncidentReport {
   const IncidentReport({
     required this.id,
     required this.userId,
+    required this.title,
     required this.date,
     required this.location,
     required this.description,
@@ -41,6 +43,7 @@ class IncidentReport {
   // Create a new incident report
   factory IncidentReport.create({
     required String userId,
+    required String title,
     required DateTime date,
     required String location,
     required String description,
@@ -52,6 +55,7 @@ class IncidentReport {
     return IncidentReport(
       id: '', // Will be set by Firestore
       userId: userId,
+      title: title,
       date: date,
       location: location,
       description: description,
@@ -68,6 +72,7 @@ class IncidentReport {
     return IncidentReport(
       id: doc.id,
       userId: data['userId'] ?? '',
+      title: data['title'] ?? '',
       date: (data['date'] as Timestamp).toDate(),
       location: data['location'] ?? '',
       description: data['description'] ?? '',
@@ -89,6 +94,7 @@ class IncidentReport {
   Map<String, dynamic> toFirestore() {
     return {
       'userId': userId,
+      'title': title,
       'date': Timestamp.fromDate(date),
       'location': location,
       'description': description,
@@ -107,6 +113,7 @@ class IncidentReport {
   IncidentReport copyWith({
     String? id,
     String? userId,
+    String? title,
     DateTime? date,
     String? location,
     String? description,
@@ -122,6 +129,7 @@ class IncidentReport {
     return IncidentReport(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      title: title ?? this.title,
       date: date ?? this.date,
       location: location ?? this.location,
       description: description ?? this.description,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
-import 'view_report_screen.dart';
+import 'all_reports_screen.dart';
 
 class SubmissionConfirmationScreen extends ConsumerWidget {
   const SubmissionConfirmationScreen({super.key});
@@ -53,12 +53,14 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             CustomButton(
-              text: 'View Report',
+              text: 'Back to My Reports',
               onPressed: () {
-                Navigator.of(context).pushReplacement(
+                ref.read(incidentReportProvider.notifier).clearCurrentReport();
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (_) => const ViewReportScreen(),
+                    builder: (_) => const AllReportsScreen(),
                   ),
+                  (route) => false,
                 );
               },
             ),

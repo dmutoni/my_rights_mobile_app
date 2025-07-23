@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_list.dart';
 import '../../provider/auth_provider.dart';
 import 'report_abuse_screen.dart';
+import '../../provider/incident_report_provider.dart';
+import 'view_report_screen.dart';
+import '../../models/incident_report_model.dart';
 
 class AllReportsScreen extends ConsumerWidget {
   const AllReportsScreen({super.key});
@@ -11,6 +14,7 @@ class AllReportsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final initials = user?.initials ?? '--';
+    final reports = ref.watch(userReportsProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,32 +36,35 @@ class AllReportsScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
         child: Column(
           children: [
-            CustomList(
-              items: [
-                CustomListItem(
-                  icon: Icons.description_outlined,
-                  title: 'Incident 1',
-                  subtitle: 'Submitted',
-                  statusColor: Colors.green,
-                  onTap: () {},
+            if (reports.isEmpty)
+              const Expanded(
+                child: Center(child: Text('No reports found.')),
+              )
+            else
+              Expanded(
+                child: CustomList(
+                  items: reports.map((report) => CustomListItem(
+                    icon: Icons.description_outlined,
+                    title: report.title,
+                    subtitle: report.status.name,
+                    statusColor: report.status == IncidentStatus.submitted
+                        ? Colors.green
+                        : report.status == IncidentStatus.underReview
+                            ? Colors.orange
+                            : report.status == IncidentStatus.resolved
+                                ? Colors.blue
+                                : Colors.red,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ViewReportScreen(report: report),
+                        ),
+                      );
+                    },
+                  )).toList(),
                 ),
-                CustomListItem(
-                  icon: Icons.description_outlined,
-                  title: 'Incident 2',
-                  subtitle: 'Under Review',
-                  statusColor: Colors.orange,
-                  onTap: () {},
-                ),
-                CustomListItem(
-                  icon: Icons.description_outlined,
-                  title: 'Incident 3',
-                  subtitle: 'Resolved',
-                  statusColor: Colors.blue,
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const Spacer(),
+              ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
