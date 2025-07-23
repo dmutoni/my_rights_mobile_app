@@ -262,4 +262,28 @@ class FirebaseService {
   }) {
     return _firestore.collection(collection).where(field, arrayContains: value).snapshots();
   }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getInnerDocument({
+    required String collection,
+    required String docId,
+    required String innerCollection,
+    String? innerDocId,
+    String? anotherCollection,
+  }) {
+    if (anotherCollection != null && innerDocId != null) {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .doc(innerDocId)
+        .collection(anotherCollection)
+        .get();
+    } else {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .get();
+    }
+  }
 }

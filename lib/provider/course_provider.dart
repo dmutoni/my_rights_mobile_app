@@ -46,3 +46,47 @@ final coursesByCategoryProvider = StreamProvider.family<List<Course>, String>((r
   ).map((snapshot) =>
       snapshot.docs.map((doc) => Course.fromJson({...doc.data(), 'id': doc.id})).toList());
 });
+
+final courseDetailProvider = StreamProvider.family<Course?, String>((ref, courseId) {
+  return FirebaseService.getDocument(collection: 'courses', docId: courseId)
+    .asyncMap((doc) async {
+      if (!doc.exists || doc.data() == null) {
+        return null;
+      }
+      
+      Map<String, dynamic> data = {
+        ...doc.data()!,
+        'id': doc.id,
+      };
+
+      // Fetch lessons
+      final lessonsSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons');
+
+      for (var lessonDoc in lessonsSnapshot.docs) {
+        // Fetch chapters for this lesson
+        final chaptersSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'chapters');
+
+        // Fetch quizzes for this lesson
+        final quizzesSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'quiz');
+
+        data['lessons'] = {
+          ...lessonDoc.data(),
+          'id': lessonDoc.id,
+          'chapters': chaptersSnapshot.docs
+            .map((chapterDoc) => {
+              ...chapterDoc.data(),
+              'id': chapterDoc.id,
+            })
+            .toList(),
+          'quizzes': quizzesSnapshot.docs
+            .map((quizDoc) => {
+              ...quizDoc.data(),
+              'id': quizDoc.id,
+            })
+            .toList(),
+        };
+      }
+
+      return Course.fromJson(data);
+    });
+});

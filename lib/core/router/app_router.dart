@@ -4,6 +4,7 @@ import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/category_courses_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn/course_detail_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/learn_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
@@ -81,8 +82,8 @@ class AppRouter {
         path: '$learn/course/:courseId',
         name: 'course',
         builder: (context, state) {
-          final courseId = state.pathParameters['courseId'];
-          return Center(child: Text('Course ID: $courseId'));
+          final courseId = state.pathParameters['courseId'] ?? '';
+          return CourseDetailScreen(courseId: courseId);
         },
       ),
     ],
