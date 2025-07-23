@@ -60,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                       description: 'Report incidents of injustice or corruption.',
                       onTap: () => {
                         ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
-                        context.go(AppRouter.report)
+                        context.go(AppRouter.incidentReport)
                       },
                     ),
                     QuickAccessCard(

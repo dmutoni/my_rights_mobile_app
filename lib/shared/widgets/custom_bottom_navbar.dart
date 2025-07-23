@@ -48,7 +48,7 @@ class CustomBottomNavBar extends ConsumerWidget {
             selectedIndex: selectedIndex,
             onTap: () => {
               ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
-              context.go(AppRouter.report),
+              context.go(AppRouter.incidentReport),
             },
           ),
           _buildNavItem(
