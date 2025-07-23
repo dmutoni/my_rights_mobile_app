@@ -1,8 +1,8 @@
 class Quiz {
   final String id;
-  final num answer;
+  final dynamic answer;
   final String explanation;
-  final List<String> options;
+  final List<dynamic> options;
   final String question;
   final String type;
 
@@ -20,9 +20,7 @@ class Quiz {
       id: json['id'] ?? '',
       answer: json['answer'] ?? 0,
       explanation: json['explanation'] ?? '',
-      options: (json['options'] as List<dynamic>?)
-          ?.map((option) => option as String)
-          .toList() ?? [],
+      options: json['options'] ?? [],
       question: json['question'] ?? '',
       type: json['type'] ?? '',
     );

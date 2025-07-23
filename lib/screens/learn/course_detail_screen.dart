@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
+import 'package:my_rights_mobile_app/shared/widgets/custom_list.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
+import 'package:my_rights_mobile_app/shared/widgets/progress_card.dart';
 
 class CourseDetailScreen extends ConsumerWidget {
   final String courseId;
@@ -14,6 +16,7 @@ class CourseDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final courseAsync = ref.watch(courseDetailProvider(courseId));
+    final courseProgressAsync = ref.watch(courseProgressProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -44,7 +47,6 @@ class CourseDetailScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
                     // Courses Section
                     courseAsync.when(
                       data: (course) {
@@ -60,7 +62,7 @@ class CourseDetailScreen extends ConsumerWidget {
                           children: [
                             // Course Image and Title
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.3, // 30% of screen height
+                              height: MediaQuery.of(context).size.height * 0.4, // 40% of screen height
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: NetworkImage(course.imageUrl),
@@ -123,14 +125,51 @@ class CourseDetailScreen extends ConsumerWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
+                                  // Lessons List
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: course.lessons.length,
+                                    itemBuilder: (context, index) {
+                                      final lesson = course.lessons[index];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 4.0),
+                                        child: CustomListItem(
+                                          icon: MingCuteIcons.mgc_book_6_line,
+                                          title: lesson.title,
+                                          subtitle: lesson.description,
+                                          onTap: () => {
+                                          context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // Overall Progress
+                                  courseProgressAsync.when(
+                                    data: (courseProgress) => ProgressCard(
+                                      title: 'Overall Progress',
+                                      percentage: courseProgress?.percentage ?? 0.0,
+                                    ),
+                                    loading: () => const LinearProgressIndicator(),
+                                    error: (error, stack) => const Text('Error loading progress'),
+                                  ),
+                                  const SizedBox(height: 16),
                                 ],
                               )
                             )
                           ],
                         );
                       },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Center(child: Text('Error')),
+                      loading: () => Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                        child: Center(child: CircularProgressIndicator())
+                      ),
+                      error: (error, stack) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                        child: Center(child: Text('Error'))
+                      ),
                     ),
                   ]
                 )

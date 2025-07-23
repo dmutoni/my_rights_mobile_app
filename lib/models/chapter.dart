@@ -4,7 +4,7 @@ class Chapter {
   final String id;
   final String title;
   final int order;
-  final List<Content> content;
+  final Content? content;
 
   Chapter({
     required this.id,
@@ -15,12 +15,10 @@ class Chapter {
 
   factory Chapter.fromJson(Map<String, dynamic> json) {
     return Chapter(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      order: json['order'] as int,
-      content: (json['content'] as List<dynamic>?)
-          ?.map((item) => Content.fromJson(item as Map<String, dynamic>))
-          .toList() ?? [],
+      id: json['id'],
+      title: json['title'],
+      order: json['order'],
+      content: json['content'] != null ? Content.fromJson(json['content']) : null,
     );
   }
 }

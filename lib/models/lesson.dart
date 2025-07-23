@@ -27,12 +27,8 @@ class Lesson {
       description: json['description'] ?? '',
       order: json['order'] ?? 0,
       estimatedDurationMinutes: json['estimatedDurationMinutes'] ?? 0,
-      chapters: (json['chapters'] as List<dynamic>?)
-        ?.map((chapter) => Chapter.fromJson(chapter as Map<String, dynamic>))
-        .toList() ?? [],
-      quizzes: (json['quizzes'] as List<dynamic>?)
-        ?.map((quiz) => Quiz.fromJson(quiz as Map<String, dynamic>))
-        .toList() ?? [],
+      chapters: (json['chapters'] as List<dynamic>?)?.map((chapter) => Chapter.fromJson(chapter)).toList() ?? [],
+      quizzes: (json['quizzes'] as List<dynamic>?)?.map((quiz) => Quiz.fromJson(quiz)).toList() ?? [],
     );
   }
 }

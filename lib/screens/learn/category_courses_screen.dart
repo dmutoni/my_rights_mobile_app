@@ -55,10 +55,13 @@ class CategoryCoursesScreen extends ConsumerWidget {
                       data: (courses) {
                         if (courses.isEmpty) {
                           // No courses available in this category
-                          return EmptyCard(
-                            icon: MingCuteIcons.mgc_compass_3_line,
-                            title: 'No Courses Available',
-                            description: 'There are no courses available in this category at the moment.',
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                            child: EmptyCard(
+                              icon: MingCuteIcons.mgc_compass_3_line,
+                              title: 'No Courses Available',
+                              description: 'There are no courses available in this category at the moment.',
+                            ),
                           );
                         }
                         return Column(
@@ -95,8 +98,14 @@ class CategoryCoursesScreen extends ConsumerWidget {
                           ],
                         );
                       },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Center(child: Text('Error loading courses')),
+                      loading: () => Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (error, stack) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.2),
+                        child: Center(child: Text('Error loading courses')),
+                      ),
                     ),
                   ],
                 ),

@@ -62,6 +62,10 @@ final courseDetailProvider = StreamProvider.family<Course?, String>((ref, course
       // Fetch lessons
       final lessonsSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons');
 
+      final lessons = <Map<String, dynamic>>[];
+      final chapters = <Map<String, dynamic>>[];
+      final quizzes = <Map<String, dynamic>>[];
+
       for (var lessonDoc in lessonsSnapshot.docs) {
         // Fetch chapters for this lesson
         final chaptersSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'chapters');
@@ -69,24 +73,29 @@ final courseDetailProvider = StreamProvider.family<Course?, String>((ref, course
         // Fetch quizzes for this lesson
         final quizzesSnapshot = await FirebaseService.getInnerDocument(collection: 'courses', docId: courseId, innerCollection: 'lessons', innerDocId: lessonDoc.id, anotherCollection: 'quiz');
 
-        data['lessons'] = {
+        for (var chapterDoc in chaptersSnapshot.docs) {
+          chapters.add({
+            ...chapterDoc.data(),
+            'id': chapterDoc.id,
+          });
+        }
+        
+        for (var quizDoc in quizzesSnapshot.docs) {
+          quizzes.add({
+            ...quizDoc.data(),
+            'id': quizDoc.id,
+          });
+        }
+
+        lessons.add({
           ...lessonDoc.data(),
           'id': lessonDoc.id,
-          'chapters': chaptersSnapshot.docs
-            .map((chapterDoc) => {
-              ...chapterDoc.data(),
-              'id': chapterDoc.id,
-            })
-            .toList(),
-          'quizzes': quizzesSnapshot.docs
-            .map((quizDoc) => {
-              ...quizDoc.data(),
-              'id': quizDoc.id,
-            })
-            .toList(),
-        };
+          'chapters': chapters,
+          'quizzes': quizzes,
+        });
       }
 
+      data['lessons'] = lessons;
       return Course.fromJson(data);
     });
 });

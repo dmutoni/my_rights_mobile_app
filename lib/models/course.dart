@@ -51,12 +51,8 @@ class Course {
       totalQuestions: json['totalQuestions'] ?? 0,
       estimatedDurationMinutes: json['estimatedDurationMinutes'] ?? 0,
       totalLessons: json['totalLessons'] ?? 0,
-      lessons: (json['lessons'] as List<dynamic>?)
-        ?.map((lesson) => Lesson.fromJson(lesson as Map<String, dynamic>))
-        .toList() ?? [],
-      resources: (json['resources'] as List<dynamic>?)
-        ?.map((resource) => Resource.fromJson(resource as Map<String, dynamic>))
-        .toList() ?? [],
+      lessons: (json['lessons'] as List<dynamic>?)?.map((lesson) => Lesson.fromJson(lesson)).toList() ?? [],
+      resources: (json['resources'] as List<dynamic>?)?.map((resource) => Resource.fromJson(resource)).toList() ?? [],
     );
   }
 }

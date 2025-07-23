@@ -16,10 +16,8 @@ class Content {
   factory Content.fromJson(Map<String, dynamic> json) {
     return Content(
       audioUrl: json['audioUrl'] ?? '',
-      images: (json['images'] as List<dynamic>?)
-          ?.map((image) => ContentImage.fromJson(image as Map<String, dynamic>))
-          .toList() ?? [],
-      keyPoints: List<String>.from(json['keyPoints'] ?? []),
+      images: (json['images'] as List<dynamic>?)?.map((image) => ContentImage.fromJson(image)).toList() ?? [],
+      keyPoints: json['keyPoints'] != null ? List<String>.from(json['keyPoints']) : [],
       text: json['text'] ?? '',
       videoUrl: json['videoUrl'] ?? '',
     );
@@ -27,9 +25,9 @@ class Content {
 }
 
 class ContentImage {
-  String altText;
-  String caption;
-  String url;
+  final String altText;
+  final String caption;
+  final String url;
 
   ContentImage({
     required this.altText,
