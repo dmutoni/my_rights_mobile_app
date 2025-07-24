@@ -24,7 +24,7 @@ class CategoryCoursesScreen extends ConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.foregroundColor),
-          onPressed: () => context.go(AppRouter.learn),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           '${

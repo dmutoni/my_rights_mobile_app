@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
   final Widget? icon;
   final double? fontSize;
   final Color? backgroundColor;
+  final Color? disabledBackgroundColor;
   final Color? textColor;
   final Color? borderColor;
 
@@ -31,6 +32,7 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.fontSize,
     this.backgroundColor,
+    this.disabledBackgroundColor,
     this.textColor,
     this.borderColor,
   });
@@ -65,7 +67,7 @@ class CustomButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? AppColors.primary,
         foregroundColor: textColor ?? Colors.white,
-        disabledBackgroundColor: AppColors.textLight,
+        disabledBackgroundColor: disabledBackgroundColor ?? AppColors.textLight,
         disabledForegroundColor: Colors.white,
         elevation: 0,
         padding: padding ?? const EdgeInsets.symmetric(vertical: 16),

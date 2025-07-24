@@ -36,7 +36,7 @@ class LessonScreen extends ConsumerWidget {
               ref.read(currentChapterProvider.notifier).state = currentChapterIndex - 1
             } else {
               // Go back to course overview
-              context.go('${AppRouter.learn}/course/$courseId')
+              Navigator.of(context).pop()
             }
           },
         ),

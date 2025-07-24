@@ -29,7 +29,7 @@ class CourseDetailScreen extends ConsumerWidget {
           icon: Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.foregroundColor),
           onPressed: () => {
             ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
-            context.go(AppRouter.learn)
+            Navigator.of(context).pop(),
           },
         ),
         title: Text(
