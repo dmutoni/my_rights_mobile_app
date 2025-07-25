@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
 
@@ -149,9 +150,9 @@ class _VideoPanelState extends State<VideoPanel> {
                           allowScrubbing: true,
                           padding: EdgeInsets.zero,
                           colors: VideoProgressColors(
-                            playedColor: Colors.red,
-                            bufferedColor: Colors.white.withValues(alpha: .5),
-                            backgroundColor: Colors.white.withValues(alpha: .2),
+                            playedColor: AppColors.error,
+                            bufferedColor: AppColors.surface.withValues(alpha: .5),
+                            backgroundColor: AppColors.surface.withValues(alpha: .2),
                           ),
                         ),
                       ),

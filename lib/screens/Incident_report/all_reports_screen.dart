@@ -16,7 +16,7 @@ class AllReportsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reports = ref.watch(userReportsProvider);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CustomAppBar(title: 'My Reports'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
@@ -39,14 +39,14 @@ class AllReportsScreen extends ConsumerWidget {
                                 subtitle: report.status.name,
                                 statusColor:
                                     report.status == IncidentStatus.submitted
-                                        ? Colors.green
+                                        ? AppColors.success
                                         : report.status ==
                                                 IncidentStatus.underReview
-                                            ? Colors.orange
+                                            ? AppColors.warning
                                             : report.status ==
                                                     IncidentStatus.resolved
-                                                ? Colors.blue
-                                                : Colors.red,
+                                                ? AppColors.info
+                                                : AppColors.error,
                                 onTap: () {
                                   context.go(
                                     '/incident-report/view-report',
