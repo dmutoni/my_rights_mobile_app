@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
@@ -9,6 +10,7 @@ import 'package:my_rights_mobile_app/screens/learn/learn_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/lesson_screen.dart';
+import 'package:my_rights_mobile_app/screens/learn/quiz_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
@@ -100,15 +102,15 @@ class AppRouter {
                   return LessonScreen(courseId: courseId, lessonId: lessonId);
                 },
                 routes: [
-                  // GoRoute(
-                  //   path: 'quiz',
-                  //   name: 'quiz',
-                  //   builder: (context, state) {
-                  //     final courseId = state.pathParameters['courseId'] ?? '';
-                  //     final lessonId = state.pathParameters['lessonId'] ?? '';
-                  //     return QuizScreen(courseId: courseId, lessonId: lessonId);
-                  //   },
-                  // ),
+                  GoRoute(
+                    path: 'quiz',
+                    name: 'quiz',
+                    builder: (context, state) {
+                      final courseId = state.pathParameters['courseId'] ?? '';
+                      final lessonId = state.pathParameters['lessonId'] ?? '';
+                      return QuizScreen(courseId: courseId, lessonId: lessonId);
+                    },
+                  ),
                 ],
               ),
             ],
@@ -149,7 +151,7 @@ class AppRouter {
             const Icon(
               Icons.error_outline,
               size: 64,
-              color: Colors.red,
+              color: AppColors.error,
             ),
             const SizedBox(height: 16),
             Text(

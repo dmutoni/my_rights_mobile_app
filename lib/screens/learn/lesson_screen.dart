@@ -51,6 +51,15 @@ class LessonScreen extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+          icon: Icon(Icons.close, color: Theme.of(context).appBarTheme.foregroundColor),
+          onPressed: () => {
+              // Go back to course overview
+              Navigator.of(context).pop()
+          },
+        )
+        ],
       ),
       body: chaptersAsync.when(
         data: (chapters) {
