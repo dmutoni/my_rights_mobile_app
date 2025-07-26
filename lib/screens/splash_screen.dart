@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
                         width: 120,
                         height: 120,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.surface,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
@@ -117,18 +117,18 @@ class _SplashScreenState extends State<SplashScreen>
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.surface,
                         ),
                       ),
 
                       const SizedBox(height: 8),
 
                       // Tagline
-                      const Text(
+                      Text(
                         'Empowering citizens with legal knowledge',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white70,
+                          color: AppColors.surface.withValues(alpha: .7),
                         ),
                         textAlign: TextAlign.center,
                       ),

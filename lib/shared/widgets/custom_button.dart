@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
   final Widget? icon;
   final double? fontSize;
   final Color? backgroundColor;
+  final Color? disabledBackgroundColor;
   final Color? textColor;
   final Color? borderColor;
 
@@ -31,6 +32,7 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.fontSize,
     this.backgroundColor,
+    this.disabledBackgroundColor,
     this.textColor,
     this.borderColor,
   });
@@ -64,9 +66,9 @@ class CustomButton extends StatelessWidget {
       onPressed: disabled ? null : onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor ?? AppColors.primary,
-        foregroundColor: textColor ?? Colors.white,
-        disabledBackgroundColor: AppColors.textLight,
-        disabledForegroundColor: Colors.white,
+        foregroundColor: textColor ?? AppColors.surface,
+        disabledBackgroundColor: disabledBackgroundColor ?? AppColors.textLight,
+        disabledForegroundColor: AppColors.surface,
         elevation: 0,
         padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
@@ -84,7 +86,7 @@ class CustomButton extends StatelessWidget {
         backgroundColor: backgroundColor ?? AppColors.surfaceVariant,
         foregroundColor: textColor ?? AppColors.textPrimary,
         disabledBackgroundColor: AppColors.textLight,
-        disabledForegroundColor: Colors.white,
+        disabledForegroundColor: AppColors.surface,
         elevation: 0,
         padding: padding ?? const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
@@ -135,7 +137,7 @@ class CustomButton extends StatelessWidget {
         width: 20,
         height: 20,
         child: CircularProgressIndicator(
-          color: Colors.white,
+          color: AppColors.surface,
           strokeWidth: 2,
         ),
       );

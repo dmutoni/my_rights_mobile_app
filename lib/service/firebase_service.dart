@@ -254,4 +254,53 @@ class FirebaseService {
   }) {
     return _firestore.collection(collection).where(field, isEqualTo: value).snapshots();
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentArrayQuery({
+    required String collection,
+    required String field,
+    required dynamic value,
+  }) {
+    return _firestore.collection(collection).where(field, arrayContains: value).snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getInnerDocument({
+    required String collection,
+    required String docId,
+    required String innerCollection,
+    String? innerDocId,
+    String? anotherCollection,
+    String? orderByField,
+  }) {
+    if (anotherCollection != null && innerDocId != null && orderByField != null) {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .doc(innerDocId)
+        .collection(anotherCollection)
+        .orderBy(orderByField)
+        .snapshots();
+    } else if (anotherCollection != null && innerDocId != null) {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .doc(innerDocId)
+        .collection(anotherCollection)
+        .snapshots();
+    } else if (orderByField != null) {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .orderBy(orderByField)
+        .snapshots();
+    } else {
+      return _firestore
+        .collection(collection)
+        .doc(docId)
+        .collection(innerCollection)
+        .snapshots();
+    }
+  }
 }

@@ -40,6 +40,11 @@ dependencies:
   firebase_storage: ^12.4.9
   firebase_messaging: ^15.2.9
   ming_cute_icons: ^0.0.7
+  audioplayers: ^6.5.0
+  video_player: ^2.10.0
+  pdf: ^3.11.3
+  path_provider: ^2.1.5
+  share_plus: ^11.0.0
 
 dev_dependencies:
   flutter_test:

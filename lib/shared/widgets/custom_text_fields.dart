@@ -121,7 +121,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             prefixIcon: widget.prefixIcon,
             suffixIcon: _buildSuffixIcon(),
             filled: true,
-            fillColor: _focusNode.hasFocus ? Colors.white : AppColors.inputFill,
+            fillColor: _focusNode.hasFocus ? AppColors.surface : AppColors.inputFill,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.inputBorder),
