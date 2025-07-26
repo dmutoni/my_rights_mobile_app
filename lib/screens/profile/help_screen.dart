@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
+import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 
 class HelpScreen extends ConsumerWidget {
   const HelpScreen({super.key});
@@ -110,6 +111,7 @@ class HelpScreen extends ConsumerWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 
