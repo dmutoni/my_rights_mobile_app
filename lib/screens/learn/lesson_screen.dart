@@ -20,7 +20,7 @@ class LessonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chaptersAsync = ref.watch(lessonChaptersProvider((courseId: courseId, lessonId: lessonId)));
-    final currentChapterIndex = ref.watch(currentChapterProvider);
+    final currentChapterIndex = ref.watch(currentChapterProvider(lessonId));
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -33,7 +33,7 @@ class LessonScreen extends ConsumerWidget {
             // check if we have a previous chapter
             if (currentChapterIndex > 0) {
               // Go to previous chapter
-              ref.read(currentChapterProvider.notifier).state = currentChapterIndex - 1
+              ref.read(currentChapterProvider(lessonId).notifier).state = currentChapterIndex - 1
             } else {
               // Go back to course overview
               Navigator.of(context).pop()
@@ -238,7 +238,7 @@ class LessonScreen extends ConsumerWidget {
                     onPressed: () => {
                     if (currentChapterIndex < chapters.length - 1) {
                       // Go to next chapter
-                      ref.read(currentChapterProvider.notifier).state = currentChapterIndex + 1
+                      ref.read(currentChapterProvider(lessonId).notifier).state = currentChapterIndex + 1
                     } else {
                       // Go to quiz
                       ref.read(currentQuestionProvider.notifier).state = 0,

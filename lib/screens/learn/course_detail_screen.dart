@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
+import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
 import 'package:my_rights_mobile_app/provider/main_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_list.dart';
@@ -18,8 +19,10 @@ class CourseDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final courseAsync = ref.watch(courseDetailProvider(courseId));
     final lessonsAsync = ref.watch(courseLessonsProvider(courseId));
-    final courseProgressAsync = ref.watch(courseProgressProvider);
-
+    
+    // Calculate overall progress (average)
+    double overallProgress = 0;
+    
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: AppBar(
@@ -134,66 +137,121 @@ class CourseDetailScreen extends ConsumerWidget {
                                   const SizedBox(height: 16),
                                   // Lessons List
                                   lessonsAsync.when(
-                                    data: (lessons) => ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: lessons.length,
-                                      itemBuilder: (context, index) {
-                                        final lesson = lessons[index];
-                                        return Padding(
-                                          padding: const EdgeInsets.only(right: 4.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              // Lesson Item
-                                              CustomListItem(
-                                                icon: MingCuteIcons.mgc_book_6_line,
-                                                title: lesson.title,
-                                                subtitle: lesson.description,
-                                                onTap: () => {
-                                                context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
-                                                },
-                                              ),
-                                              // Add the estimated time if available
-                                              Padding(
-                                                padding: const EdgeInsets.only(left: 56.0, bottom: 8.0),
-                                                child: Row(
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.access_time,
-                                                      size: 14,
-                                                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                                                    ),
-                                                    const SizedBox(width: 4),
-                                                    Text(
-                                                      '${lesson.estimatedDurationMinutes} min',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-
-                                            ],
-                                          )
+                                    data: (lessons) {
+                                      // Calculate progress for each lesson
+                                      final startedLessons = ref.watch(startedLessonsProvider);
+                                      List<num> lessonProgresses = [];
+                                      for (var lesson in lessons) {
+                                        final isStarted = startedLessons.contains(lesson.id);
+                                        final currentChapter = ref.watch(currentChapterProvider(lesson.id));
+                                        final totalChapters = ref.watch(
+                                          lessonChaptersProvider((courseId: courseId, lessonId: lesson.id))
+                                        ).when(
+                                          data: (chapters) => chapters.length,
+                                          loading: () => 1,
+                                          error: (error, stack) => 1,
                                         );
-                                      },
-                                    ),
+                                        final progress = isStarted ? totalChapters == 0 ? 0 : (((currentChapter + 1) / totalChapters) * 100) : 0;
+                                        lessonProgresses.add(progress);
+                                      }
+
+
+                                      overallProgress = lessonProgresses.isNotEmpty ? lessonProgresses.reduce((a, b) => a + b) / lessonProgresses.length : 0;
+
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        itemCount: lessons.length,
+                                        itemBuilder: (context, index) {
+                                          final lesson = lessons[index];
+                                          final currentChapter = ref.watch(currentChapterProvider(lesson.id));
+                                          final totalChapters = ref.watch(lessonChaptersProvider((courseId: courseId, lessonId: lesson.id))).when(
+                                            data: (chapters) => chapters.length,
+                                            loading: () => 1,
+                                            error: (error, stack) => 1,
+                                          );
+                                          final startedLessons = ref.watch(startedLessonsProvider);
+                                          final isStarted = startedLessons.contains(lesson.id);
+                                          final progress = isStarted ? totalChapters == 0 ? 0 : (((currentChapter + 1) / totalChapters) * 100) : 0;
+                                          
+                                          return Padding(
+                                            padding: const EdgeInsets.only(right: 4.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Lesson Item
+                                                CustomListItem(
+                                                  icon: MingCuteIcons.mgc_book_6_line,
+                                                  title: lesson.title,
+                                                  subtitle: lesson.description,
+                                                  onTap: () => {
+                                                    ref.read(startedLessonsProvider.notifier).update((set) => {...set, lesson.id}),
+                                                    context.push('${AppRouter.learn}/course/${course.id}/lesson/${lesson.id}'),
+                                                  },
+                                                ),
+                                                // Add the estimated time if available
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 56.0, bottom: 8.0, right: 16.0),
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.access_time,
+                                                            size: 14,
+                                                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                                          ),
+                                                          const SizedBox(width: 4),
+                                                          Text(
+                                                            '${lesson.estimatedDurationMinutes} min',
+                                                            style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                                            ),
+                                                          ),
+                                                        ]
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      if (progress >= 100) ...[
+                                                        Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: [
+                                                            Icon(
+                                                              MingCuteIcons.mgc_checks_line,
+                                                              color: AppColors.success
+                                                            ),
+                                                            const SizedBox(width: 4),
+                                                            Text(
+                                                              'Completed',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight: FontWeight.w800,
+                                                                color: AppColors.success,
+                                                              ),
+                                                            )
+                                                          ]
+                                                        )
+                                                      ]
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          );
+                                        },
+                                      );
+                                    },
                                     loading: () => const Center(child: CircularProgressIndicator()),
                                     error: (error, stack) => Center(child: Text('Error loading lessons')),
                                   ),
                                   const SizedBox(height: 16),
                                   // Overall Progress
-                                  courseProgressAsync.when(
-                                    data: (courseProgress) => ProgressCard(
-                                      title: 'Overall Progress',
-                                      percentage: courseProgress?.percentage ?? 0.0,
-                                    ),
-                                    loading: () => const LinearProgressIndicator(),
-                                    error: (error, stack) => const Text('Error loading progress'),
+                                  ProgressCard(
+                                    title: 'Overall Progress',
+                                    percentage: overallProgress,
                                   ),
                                   const SizedBox(height: 16),
                                 ],
