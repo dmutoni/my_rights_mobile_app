@@ -17,8 +17,10 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final featuredCoursesAsync = ref.watch(featuredCoursesProvider);
-    final helpfulTipsAsync = ref.watch(helpfulTipsProvider);
+    final featuredCourses = ref.watch(coursesProvider).courses.where((course) => course.featured).toList();
+    final helpfulTips = ref.watch(coursesProvider).tips;
+    final loading = ref.watch(coursesProvider).loading;
+    final error = ref.watch(coursesProvider).error;
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -81,38 +83,36 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    featuredCoursesAsync.when(
-                      data: (courses) {
-                        if (courses.isEmpty) {
-                          // Show empty state if no featured courses
-                          return EmptyCard(
-                            icon: MingCuteIcons.mgc_book_6_line,
-                            title: 'No Featured Courses',
-                            description: 'Featured courses will appear here when available. Check back later for new content!',
-                          );
-                        }
-                        return SizedBox(
-                          height: MediaQuery.of(context).size.width * 0.75, // 75% of screen height
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: courses.length,
-                            separatorBuilder: (context, index) => SizedBox(width: 20), // 20 pixels between cards
-                            itemBuilder: (context, index) {
-                              final course = courses[index];
-                              return SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.5, // 50% of screen width
-                                child: CourseCard(
-                                course: course,
-                                onTap: () => context.go('${AppRouter.learn}/course/${course.id}'),
-                              ));
-                            },
-                          ),
-                        );
-                      },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Center(child: Text('Error loading courses')),
-                    ),
+                    if (loading)
+                      const Center(child: CircularProgressIndicator()),
+                    if (error != null)
+                      Center(child: Text('Error loading courses: $error')),
+                    if (featuredCourses.isEmpty)
+                      // Show empty state if no featured courses
+                      EmptyCard(
+                        icon: MingCuteIcons.mgc_book_6_line,
+                        title: 'No Featured Courses',
+                        description: 'Featured courses will appear here when available. Check back later for new content!',
+                      )
+                    else 
+                      SizedBox(
+                        height: MediaQuery.of(context).size.width * 0.75, // 75% of screen height
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: featuredCourses.length,
+                          separatorBuilder: (context, index) => SizedBox(width: 20), // 20 pixels between cards
+                          itemBuilder: (context, index) {
+                            final course = featuredCourses[index];
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5, // 50% of screen width
+                              child: CourseCard(
+                              course: course,
+                              onTap: () => context.go('${AppRouter.learn}/course/${course.id}'),
+                            ));
+                          },
+                        ),
+                      ),
                     const SizedBox(height: 20),
                     // Helpful Tips Section
                     Text(
@@ -124,28 +124,26 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    helpfulTipsAsync.when(
-                      data: (tips) {
-                        if (tips.isEmpty) {
-                          // Show empty state if no tips
-                          return EmptyCard(
-                            icon: MingCuteIcons.mgc_light_line,
-                            title: 'No Helpful Tips',
-                            description: 'Helpful tips will appear here when available. Check back later for new content!',
-                          );
-                        }
-                        return Column(
-                          spacing: 16,
-                          children: tips.map((tip) => InfoCard(
-                            title: tip.title,
-                            description: tip.description,
-                            imageUrl: tip.imageUrl,
-                          )).toList(),
-                        );
-                      },
-                      loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (error, stack) => Center(child: Text('Error loading tips')),
-                    ),
+                    if (loading)
+                      const Center(child: CircularProgressIndicator())
+                    else if (error != null)
+                      Center(child: Text('Error loading tips'))
+                    else if (helpfulTips.isEmpty)
+                      // Show empty state if no tips
+                      EmptyCard(
+                        icon: MingCuteIcons.mgc_light_line,
+                        title: 'No Helpful Tips',
+                        description: 'Helpful tips will appear here when available. Check back later for new content!',
+                      )
+                    else
+                      Column(
+                        spacing: 16,
+                        children: helpfulTips.map((tip) => InfoCard(
+                          title: tip.title,
+                          description: tip.description,
+                          imageUrl: tip.imageUrl,
+                        )).toList(),
+                      ),
                     const SizedBox(height: 20),
                   ],
                 ),

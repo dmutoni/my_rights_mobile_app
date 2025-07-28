@@ -18,16 +18,30 @@ class QuizScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final quizAsync = ref.watch(lessonQuizProvider((courseId: courseId, lessonId: lessonId)));
+    
+    // Initialize quiz progress from storage
+    ref.watch(currentQuestionInitProvider);
+    ref.watch(selectedAnswersInitProvider(lessonId));
+    
     final currentQuestionIndex = ref.watch(currentQuestionProvider);
-    final selectedAnswers = ref.watch(selectedAnswersProvider);
+    final selectedAnswers = ref.watch(selectedAnswersProvider(lessonId));
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).appBarTheme.foregroundColor),
-          onPressed: () => Navigator.of(context).pop()
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.foregroundColor),
+          onPressed: () => {
+            // check if we have a previous question
+            if (currentQuestionIndex > 0) {
+              // Go to previous question
+              ref.read(currentQuestionProvider.notifier).decrement()
+            } else {
+              // Go back to lesson screen
+              Navigator.of(context).pop()
+            }
+          }
         ),
         title: Text(
           'Quiz',
@@ -36,6 +50,15 @@ class QuizScreen extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close, color: Theme.of(context).appBarTheme.foregroundColor),
+            onPressed: () => {
+                // Go back to lesson screen
+                Navigator.of(context).pop()
+            },
+          )
+        ],
       ),
       body: quizAsync.when(
         data: (questions) {
@@ -84,9 +107,8 @@ class QuizScreen extends ConsumerWidget {
                         final isSelected = selectedAnswers[currentQuestionIndex] == index;
                         return InkWell(
                           onTap: () {
-                            final newAnswers = Map<int, int>.from(selectedAnswers);
-                            newAnswers[currentQuestionIndex] = index;
-                            ref.read(selectedAnswersProvider.notifier).state = newAnswers;
+                            // Save answer
+                            ref.read(selectedAnswersProvider(lessonId).notifier).setAnswer(currentQuestionIndex, index);
                           },
                           child: Row(
                             children: [
@@ -143,19 +165,20 @@ class QuizScreen extends ConsumerWidget {
                         : AppColors.primary.withValues(alpha: .5),
                     disabledBackgroundColor: AppColors.primary.withValues(alpha: .5),
                     onPressed: selectedAnswers[currentQuestionIndex] != null ? () {
-                      int correctAnswers = 0;
-                      for (int i = 0; i < questions.length; i++) {
-                        final question = questions[i];
-                        final selectedAnswer = selectedAnswers[i];
-                        if (selectedAnswer != null && selectedAnswer == question.answer) {
-                          correctAnswers++;
-                        }
-                      }
-                      final score = (correctAnswers / questions.length * 100).round();
                       if (currentQuestionIndex < questions.length - 1) {
-                        ref.read(currentQuestionProvider.notifier).state = currentQuestionIndex + 1;
+                        // Go to next question
+                        ref.read(currentQuestionProvider.notifier).increment();
                       } else {
                         // Quiz completed
+                        int correctAnswers = 0;
+                        for (int i = 0; i < questions.length; i++) {
+                          final question = questions[i];
+                          final selectedAnswer = selectedAnswers[i];
+                          if (selectedAnswer != null && selectedAnswer == question.answer) {
+                            correctAnswers++;
+                          }
+                        }
+                        final score = (correctAnswers / questions.length * 100).round();
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) => QuizResultScreen(
@@ -168,8 +191,8 @@ class QuizScreen extends ConsumerWidget {
                               onRetry: () {
                                 Navigator.of(context).pop(); // Close result screen
                                 // Reset quiz state and restart
-                                ref.read(currentQuestionProvider.notifier).state = 0;
-                                ref.read(selectedAnswersProvider.notifier).state = {};
+                                ref.read(currentQuestionProvider.notifier).reset();
+                                ref.read(selectedAnswersProvider(lessonId).notifier).clearAnswers();
                               },
                               onContinue: () {
                                 Navigator.of(context).pop(); // Close result screen
@@ -190,7 +213,7 @@ class QuizScreen extends ConsumerWidget {
                                     'courseId': courseId,
                                     'lessonId': lessonId,
                                     'userName': user?.name,
-                                    'courseName': course.value?.title ?? 'Unknown Course',
+                                    'courseName': course?.title ?? 'Unknown Course',
                                     'score': score,
                                     'completionDate': DateTime.now().toIso8601String(),
                                     'certificateId': certificateId,

@@ -20,6 +20,11 @@ class LessonScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chaptersAsync = ref.watch(lessonChaptersProvider((courseId: courseId, lessonId: lessonId)));
+    
+    // Initialize lesson progress from storage
+    ref.watch(currentChapterInitProvider(lessonId));
+    ref.watch(selectedAnswersInitProvider(lessonId));
+    
     final currentChapterIndex = ref.watch(currentChapterProvider(lessonId));
 
     return Scaffold(
@@ -33,7 +38,7 @@ class LessonScreen extends ConsumerWidget {
             // check if we have a previous chapter
             if (currentChapterIndex > 0) {
               // Go to previous chapter
-              ref.read(currentChapterProvider(lessonId).notifier).state = currentChapterIndex - 1
+              ref.read(currentChapterProvider(lessonId).notifier).decrement()
             } else {
               // Go back to course overview
               Navigator.of(context).pop()
@@ -42,7 +47,9 @@ class LessonScreen extends ConsumerWidget {
         ),
         title: Text(
           chaptersAsync.when(
-            data: (chapters) => chapters.isNotEmpty ? chapters.first.title : 'Lesson',
+            data: (chapters) => chapters.isNotEmpty && currentChapterIndex < chapters.length 
+                ? chapters[currentChapterIndex].title 
+                : 'Lesson',
             error: (Object error, StackTrace stackTrace) => 'Error',
             loading: () => 'Loading...',
           ),
@@ -53,12 +60,12 @@ class LessonScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-          icon: Icon(Icons.close, color: Theme.of(context).appBarTheme.foregroundColor),
-          onPressed: () => {
-              // Go back to course overview
-              Navigator.of(context).pop()
-          },
-        )
+            icon: Icon(Icons.close, color: Theme.of(context).appBarTheme.foregroundColor),
+            onPressed: () => {
+                // Go back to course overview
+                Navigator.of(context).pop()
+            },
+          )
         ],
       ),
       body: chaptersAsync.when(
@@ -91,7 +98,7 @@ class LessonScreen extends ConsumerWidget {
 
                     // Chapter Content
                     if (chapter != null && chapter.content != null) ...[
-                                            // Images Section
+                      // Images Section
                       if (chapter.content!.images.isNotEmpty) ...[
                         for (final image in chapter.content!.images) ...[
                           ClipRRect(
@@ -233,16 +240,16 @@ class LessonScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: CustomButton(
-                    text: 'Next',
+                    text: currentChapterIndex < chapters.length - 1 ? 'Next' : 'Take Quiz',
                     width: double.infinity,
                     onPressed: () => {
                     if (currentChapterIndex < chapters.length - 1) {
                       // Go to next chapter
-                      ref.read(currentChapterProvider(lessonId).notifier).state = currentChapterIndex + 1
+                      ref.read(currentChapterProvider(lessonId).notifier).increment(),
                     } else {
                       // Go to quiz
-                      ref.read(currentQuestionProvider.notifier).state = 0,
-                      ref.read(selectedAnswersProvider.notifier).state = {},
+                      ref.read(currentQuestionProvider.notifier).reset(),
+                      ref.read(selectedAnswersProvider(lessonId).notifier).clearAnswers(),
                       context.go('${AppRouter.learn}/course/$courseId/lesson/$lessonId/quiz'),
                     }
                   }

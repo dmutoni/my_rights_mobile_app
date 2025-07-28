@@ -14,7 +14,6 @@ class CategoryCoursesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoryAsync = ref.watch(categoriesProvider);
     final categoryCoursesAsync = ref.watch(coursesByCategoryProvider(categoryId));
 
     return Scaffold(
@@ -27,13 +26,7 @@ class CategoryCoursesScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          '${
-            categoryAsync.when(
-              data: (data) => data.firstWhere((category) => category.id == categoryId).name, 
-              error: (Object error, StackTrace stackTrace) {  }, 
-              loading: () {  }
-            )
-          } Courses',
+          '${ref.read(coursesProvider.notifier).getCategory(categoryId).name} Courses',
           style: TextStyle(
             color: Theme.of(context).appBarTheme.foregroundColor,
             fontWeight: FontWeight.w600,
