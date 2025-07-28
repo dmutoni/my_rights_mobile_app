@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_list.dart';
-import '../../provider/auth_provider.dart';
 import '../../provider/incident_report_provider.dart';
 import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
