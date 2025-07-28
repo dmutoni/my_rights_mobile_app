@@ -52,7 +52,8 @@ class ViewReportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text('Date: ${report.date.toLocal().toString().split(' ')[0]}'),
+            Text(
+                'Date: ${report.incidentDate.toLocal().toString().split(' ')[0]}'),
             const SizedBox(height: 16),
             const Text('Details',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -64,19 +65,19 @@ class ViewReportScreen extends ConsumerWidget {
             const SizedBox(height: 8),
             CustomList(
               items: [
-                if (report.photoUrls.isNotEmpty)
+                if (report.evidence.where((e) => e.type == 'photo').isNotEmpty)
                   CustomListItem(
                     icon: Icons.photo_library_outlined,
                     title: 'Photo Evidence',
                     onTap: () {},
                   ),
-                if (report.videoUrls.isNotEmpty)
+                if (report.evidence.where((e) => e.type == 'video').isNotEmpty)
                   CustomListItem(
                     icon: Icons.videocam_outlined,
                     title: 'Video Evidence',
                     onTap: () {},
                   ),
-                if (report.audioUrls.isNotEmpty)
+                if (report.evidence.where((e) => e.type == 'audio').isNotEmpty)
                   CustomListItem(
                     icon: Icons.mic_none_outlined,
                     title: 'Audio Evidence',
@@ -85,13 +86,15 @@ class ViewReportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            if (report.photoUrls.isNotEmpty)
+            if (report.evidence.where((e) => e.type == 'photo').isNotEmpty)
               Container(
                 height: 160,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   image: DecorationImage(
-                    image: NetworkImage(report.photoUrls.first),
+                    image: NetworkImage(
+                      report.evidence.firstWhere((e) => e.type == 'photo').url,
+                    ),
                     fit: BoxFit.cover,
                   ),
                 ),

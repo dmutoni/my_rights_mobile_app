@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import '../../shared/widgets/custom_text_fields.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
-import 'review_report_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
@@ -14,7 +13,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 
 class ReportIncidentScreen extends ConsumerStatefulWidget {
-  const ReportIncidentScreen({super.key});
+  final String? reportType;
+
+  const ReportIncidentScreen({super.key, this.reportType});
 
   @override
   ConsumerState<ReportIncidentScreen> createState() => _ReportIncidentScreenState();
@@ -101,10 +102,11 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     try {
       // Create the report
       await notifier.createReport(
+        reportType: widget.reportType ?? 'other',
         title: _titleController.text,
-        date: DateTime.parse(_dateController.text),
-        location: _locationController.text,
         description: _descriptionController.text,
+        location: _locationController.text,
+        incidentDate: DateTime.parse(_dateController.text),
         isAnonymous: _anonymity == 'Anonymous',
       );
 

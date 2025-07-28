@@ -54,10 +54,11 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
 
   // Create a new report
   Future<void> createReport({
+    required String reportType,
     required String title,
-    required DateTime date,
-    required String location,
     required String description,
+    required String location,
+    required DateTime incidentDate,
     required bool isAnonymous,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -66,10 +67,11 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
       if (user == null) throw Exception('User not authenticated');
       final report = IncidentReport.create(
         userId: user.id,
+        reportType: reportType,
         title: title,
-        date: date,
-        location: location,
         description: description,
+        location: location,
+        incidentDate: incidentDate,
         isAnonymous: isAnonymous,
       );
       final createdReport = await IncidentReportService.createReport(report);
@@ -86,7 +88,8 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
   }
 
   // Upload evidence
-  Future<void> uploadEvidence(String type, File file) async {
+  Future<void> uploadEvidence(String type, File file,
+      {String description = ''}) async {
     if (state.currentReport == null) {
       throw Exception('No current report');
     }
@@ -94,21 +97,33 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
+      final user = ref.read(authProvider).user;
+      if (user == null) throw Exception('User not authenticated');
+
       final url = await IncidentReportService.uploadFile(
+        user.id,
         state.currentReport!.id,
         type,
         file,
       );
 
+      final evidence = EvidenceItem(
+        type: type,
+        url: url,
+        description: description,
+      );
+
       await IncidentReportService.addEvidence(
+        user.id,
         state.currentReport!.id,
-        type,
-        url,
+        evidence,
       );
 
       // Update current report with new evidence
-      final updatedReport =
-          await IncidentReportService.getReport(state.currentReport!.id);
+      final updatedReport = await IncidentReportService.getReport(
+        user.id,
+        state.currentReport!.id,
+      );
       state = state.copyWith(
         isLoading: false,
         currentReport: updatedReport,
@@ -155,11 +170,16 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
   }
 
   // Update report status
-  Future<void> updateReportStatus(String id, IncidentStatus status) async {
+  Future<void> updateReportStatus(
+      String reportId, IncidentStatus status) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      await IncidentReportService.updateReportStatus(id, status);
-      final updatedReport = await IncidentReportService.getReport(id);
+      final user = ref.read(authProvider).user;
+      if (user == null) throw Exception('User not authenticated');
+
+      await IncidentReportService.updateReportStatus(user.id, reportId, status);
+      final updatedReport =
+          await IncidentReportService.getReport(user.id, reportId);
       state = state.copyWith(
         isLoading: false,
         currentReport: updatedReport,

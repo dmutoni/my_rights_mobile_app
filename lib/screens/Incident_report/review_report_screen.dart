@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
 import 'confirm_submit_dialog.dart';
-import 'submission_confirmation_screen.dart';
 import '../../models/incident_report_model.dart';
-import 'report_incident_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
-import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
@@ -52,7 +49,8 @@ class ReviewReportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 8),
-            Text('Date: ${report.date.toLocal().toString().split(' ')[0]}'),
+            Text(
+                'Date: ${report.incidentDate.toLocal().toString().split(' ')[0]}'),
             const SizedBox(height: 16),
             const Text('Details',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -62,31 +60,54 @@ class ReviewReportScreen extends ConsumerWidget {
             const Text('Evidence',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            if (report.photoUrls.isNotEmpty)
-              ...report.photoUrls.map((url) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.network(url, height: 160, fit: BoxFit.cover),
-                    ),
-                  )),
-            if (report.videoUrls.isNotEmpty)
-              ...report.videoUrls.map((url) => ListTile(
-                    leading: const Icon(Icons.videocam_outlined),
-                    title: Text('Video Evidence'),
-                    subtitle: Text(url),
-                    onTap: () {},
-                  )),
-            if (report.audioUrls.isNotEmpty)
-              ...report.audioUrls.map((url) => ListTile(
-                    leading: const Icon(Icons.mic_none_outlined),
-                    title: Text('Audio Evidence'),
-                    subtitle: Text(url),
-                    onTap: () {},
-                  )),
-            if (report.photoUrls.isEmpty &&
-                report.videoUrls.isEmpty &&
-                report.audioUrls.isEmpty)
+            if (report.evidence.where((e) => e.type == 'photo').isNotEmpty)
+              ...report.evidence
+                  .where((e) => e.type == 'photo')
+                  .map((evidence) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(evidence.url,
+                                  height: 160, fit: BoxFit.cover),
+                            ),
+                            if (evidence.description.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  evidence.description,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ),
+                              ),
+                          ],
+                        ),
+                      )),
+            if (report.evidence.where((e) => e.type == 'video').isNotEmpty)
+              ...report.evidence
+                  .where((e) => e.type == 'video')
+                  .map((evidence) => ListTile(
+                        leading: const Icon(Icons.videocam_outlined),
+                        title: const Text('Video Evidence'),
+                        subtitle: Text(evidence.description.isNotEmpty
+                            ? evidence.description
+                            : evidence.url),
+                        onTap: () {},
+                      )),
+            if (report.evidence.where((e) => e.type == 'audio').isNotEmpty)
+              ...report.evidence
+                  .where((e) => e.type == 'audio')
+                  .map((evidence) => ListTile(
+                        leading: const Icon(Icons.mic_none_outlined),
+                        title: const Text('Audio Evidence'),
+                        subtitle: Text(evidence.description.isNotEmpty
+                            ? evidence.description
+                            : evidence.url),
+                        onTap: () {},
+                      )),
+            if (report.evidence.isEmpty)
               const Text('No evidence attached.'),
             const SizedBox(height: 32),
             Row(

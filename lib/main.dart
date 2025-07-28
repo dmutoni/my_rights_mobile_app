@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
+import 'service/report_type_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize default report types (one-time setup)
+  try {
+    await ReportTypeService.initializeDefaultReportTypes();
+  } catch (e) {
+    print('Report types initialization error: $e');
+  }
 
   runApp(
     const ProviderScope(
