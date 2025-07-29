@@ -40,7 +40,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           );
 
       final authState = ref.read(authProvider);
-      if (authState.user != null && !authState.isAuthenticated) {
+      // authState.user != null && !authState.isAuthenticated
+      if (authState.user != null) {
+        print('User signed up successfully: ${authState.user}');
         context
             .go('${AppRouter.confirmAccount}?email=${_emailController.text}');
       } else if (authState.error != null) {
@@ -53,7 +55,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           );
         }
       } else {
+        print(
+            'Signup failed, but no error message provided. ${authState.user}');
+
         try {} catch (e) {
+          print('Signup failed, but no error message provided. $e');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(e.toString()),

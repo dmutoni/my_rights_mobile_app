@@ -29,15 +29,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
+      print('Attempting to login with email: ${_emailController.text}');
       await ref.read(authProvider.notifier).login(
             _emailController.text,
             _passwordController.text,
           );
 
-      // Check if login was successful
       final authState = ref.read(authProvider);
+      print(
+          ' Login state: $authState ${authState.isAuthenticated}, User: ${authState.user}');
       if (authState.isAuthenticated) {
-        // Navigate to home or dashboard
         context.go('/home');
       } else if (authState.error != null) {
         // Show error message

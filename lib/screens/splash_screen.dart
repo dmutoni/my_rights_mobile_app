@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
+import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -47,12 +49,25 @@ class _SplashScreenState extends State<SplashScreen>
   void _startAnimation() async {
     await _animationController.forward();
 
-    // Wait for 1 second after animation completes
+    // Wait for animation to complete
     await Future.delayed(const Duration(seconds: 1));
 
-    // Navigate to welcome screen
+    // Check authentication status and navigate accordingly
     if (mounted) {
-      context.go(AppRouter.welcome);
+      final authState = ref.read(authProvider);
+
+      print('🚀 Splash navigation decision:');
+      print('   Is authenticated: ${authState.isAuthenticated}');
+      print('   Is loading: ${authState.isLoading}');
+      print('   User: ${authState.user?.email ?? "null"}');
+
+      if (authState.isAuthenticated && authState.user != null) {
+        print('   ➡️ Navigating to home');
+        context.go(AppRouter.home);
+      } else {
+        print('   ➡️ Navigating to welcome');
+        context.go(AppRouter.welcome);
+      }
     }
   }
 
@@ -64,6 +79,14 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Listen to auth changes during splash
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      print('🔄 Auth state changed during splash:');
+      print('   Previous: ${previous?.isAuthenticated ?? false}');
+      print('   Next: ${next.isAuthenticated}');
+      print('   User: ${next.user?.email ?? "null"}');
+    });
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -89,9 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(
-                                alpha: 0.1,
-                              ),
+                              color: Colors.black.withOpacity(0.1),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
