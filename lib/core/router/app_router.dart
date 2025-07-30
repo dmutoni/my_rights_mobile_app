@@ -17,6 +17,8 @@ import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.
 import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
 import 'package:my_rights_mobile_app/models/incident_report_model.dart';
+import 'package:my_rights_mobile_app/screens/profile/profile_screen.dart';
+import 'package:my_rights_mobile_app/screens/profile/edit_profile_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -73,50 +75,50 @@ class AppRouter {
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
-        path: learn,
-        name: 'learn',
-        builder: (context, state) => const LearnScreen(),
-        routes: [
-          GoRoute(
-            path: '/category/:categoryId',
-            name: 'courseCategory',
-            builder: (context, state) {
-              final categoryId = state.pathParameters['categoryId'] ?? '';
-              return CategoryCoursesScreen(categoryId: categoryId);
-            },
-          ),
-          GoRoute(
-            path: '/course/:courseId',
-            name: 'course',
-            builder: (context, state) {
-              final courseId = state.pathParameters['courseId'] ?? '';
-              return CourseDetailScreen(courseId: courseId);
-            },
-            routes: [
-              GoRoute(
-                path: 'lesson/:lessonId',
-                name: 'lesson',
-                builder: (context, state) {
-                  final courseId = state.pathParameters['courseId'] ?? '';
-                  final lessonId = state.pathParameters['lessonId'] ?? '';
-                  return LessonScreen(courseId: courseId, lessonId: lessonId);
-                },
-                routes: [
-                  GoRoute(
-                    path: 'quiz',
-                    name: 'quiz',
-                    builder: (context, state) {
-                      final courseId = state.pathParameters['courseId'] ?? '';
-                      final lessonId = state.pathParameters['lessonId'] ?? '';
-                      return QuizScreen(courseId: courseId, lessonId: lessonId);
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ]
-      ),
+          path: learn,
+          name: 'learn',
+          builder: (context, state) => const LearnScreen(),
+          routes: [
+            GoRoute(
+              path: '/category/:categoryId',
+              name: 'courseCategory',
+              builder: (context, state) {
+                final categoryId = state.pathParameters['categoryId'] ?? '';
+                return CategoryCoursesScreen(categoryId: categoryId);
+              },
+            ),
+            GoRoute(
+              path: '/course/:courseId',
+              name: 'course',
+              builder: (context, state) {
+                final courseId = state.pathParameters['courseId'] ?? '';
+                return CourseDetailScreen(courseId: courseId);
+              },
+              routes: [
+                GoRoute(
+                  path: 'lesson/:lessonId',
+                  name: 'lesson',
+                  builder: (context, state) {
+                    final courseId = state.pathParameters['courseId'] ?? '';
+                    final lessonId = state.pathParameters['lessonId'] ?? '';
+                    return LessonScreen(courseId: courseId, lessonId: lessonId);
+                  },
+                  routes: [
+                    GoRoute(
+                      path: 'quiz',
+                      name: 'quiz',
+                      builder: (context, state) {
+                        final courseId = state.pathParameters['courseId'] ?? '';
+                        final lessonId = state.pathParameters['lessonId'] ?? '';
+                        return QuizScreen(
+                            courseId: courseId, lessonId: lessonId);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ]),
       GoRoute(
         path: incidentReport,
         name: 'incidentReport',
@@ -139,6 +141,18 @@ class AppRouter {
               }
               return ViewReportScreen(report: report);
             },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: profile,
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
+        routes: [
+          GoRoute(
+            path: '/edit-profile',
+            name: 'editProfile',
+            builder: (context, state) => const EditProfileScreen(),
           ),
         ],
       ),
