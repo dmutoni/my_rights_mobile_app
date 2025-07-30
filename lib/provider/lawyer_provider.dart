@@ -17,3 +17,22 @@ final lawyersProvider = StreamProvider<List<Lawyer>>((ref) {
           snapshot.docs.map((doc) => Lawyer.fromJson({...doc.data(), 'id': doc.id})).toList());
   }
 });
+
+// Add this provider for getting individual lawyer details
+final lawyerByIdProvider = StreamProvider.family<Lawyer?, String>((ref, lawyerId) {
+  return FirebaseService.getDocumentStream('lawyers', lawyerId)
+      .map((snapshot) {
+        if (!snapshot.exists) return null;
+        
+        try {
+          final data = snapshot.data() as Map<String, dynamic>;
+          return Lawyer.fromJson({
+            ...data,
+            'id': snapshot.id,
+          });
+        } catch (e) {
+          print('Error parsing lawyer $lawyerId: $e');
+          return null;
+        }
+      });
+});
