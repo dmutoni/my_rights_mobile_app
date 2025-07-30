@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
+import 'package:my_rights_mobile_app/screens/Incident_report/report_incident_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
@@ -21,6 +22,7 @@ import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.
 import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
 import 'package:my_rights_mobile_app/models/incident_report_model.dart';
+import 'package:my_rights_mobile_app/shared/widgets/custom_button.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -170,7 +172,12 @@ class AppRouter {
               builder: (context, state) => const ReportAbuseScreen(),
             ),
             GoRoute(
-              path: 'view-report',
+              path: 'report-incident',
+              name: 'reportIncident',
+              builder: (context, state) => const ReportIncidentScreen(),
+            ),
+            GoRoute(
+              path: 'review-report',
               name: 'viewReport',
               builder: (context, state) {
                 final report = state.extra as IncidentReport?;
@@ -201,9 +208,12 @@ class AppRouter {
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => context.go(welcome),
-                child: const Text('Go to Home'),
+              CustomButton(
+                width: 150,
+                text: 'Go to Home',
+                onPressed: () {
+                  context.go(home);
+                },
               ),
             ],
           ),
