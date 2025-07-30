@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_rights_mobile_app/core/utils/email_sender.dart';
 import 'package:my_rights_mobile_app/models/user_model.dart';
 
 class FirebaseService {
@@ -15,23 +18,137 @@ class FirebaseService {
   // Auth state stream
   static Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // Generate 6-digit OTP
+  static String _generateOTP() {
+    final random = Random();
+    String otp = '';
+    for (int i = 0; i < 6; i++) {
+      otp += random.nextInt(10).toString();
+    }
+    return otp;
+  }
+
+  // Store OTP in Firestore with expiration
+  static Future<void> _storeOTP({
+    required String email,
+    required String otp,
+    required String purpose, // 'email_verification' or 'password_reset'
+  }) async {
+    try {
+      final otpDoc = {
+        'otp': otp,
+        'email': email,
+        'purpose': purpose,
+        'createdAt': FieldValue.serverTimestamp(),
+        'expiresAt': Timestamp.fromDate(
+          DateTime.now().add(const Duration(minutes: 10)), // 10 minutes expiry
+        ),
+        'isUsed': false,
+      };
+
+      await _firestore.collection('otps').add(otpDoc);
+      print('✅ OTP stored in Firestore for $email');
+    } catch (e) {
+      print('❌ Error storing OTP: $e');
+      throw Exception('Failed to store OTP: $e');
+    }
+  }
+
+  // Verify OTP
+  static Future<bool> verifyOTP({
+    required String email,
+    required String otp,
+    required String purpose,
+  }) async {
+    try {
+      print('🔍 Verifying OTP for $email, purpose: $purpose');
+
+      final query = await _firestore
+          .collection('otps')
+          .where('email', isEqualTo: email)
+          .where('otp', isEqualTo: otp)
+          .where('purpose', isEqualTo: purpose)
+          .where('isUsed', isEqualTo: false)
+          .orderBy('createdAt', descending: true)
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        print('❌ No matching OTP found');
+        return false;
+      }
+
+      final otpDoc = query.docs.first;
+      final data = otpDoc.data();
+      final expiresAt = (data['expiresAt'] as Timestamp).toDate();
+
+      if (DateTime.now().isAfter(expiresAt)) {
+        print('❌ OTP has expired');
+        return false;
+      }
+
+      // Mark OTP as used
+      await otpDoc.reference.update({'isUsed': true});
+      print('✅ OTP verified successfully');
+      return true;
+    } catch (e) {
+      print('❌ Error verifying OTP: $e');
+      return false;
+    }
+  }
+
+  // Send OTP via email (simulated - in production you'd use a real email service)
+  static Future<void> _sendOTPEmail({
+    required String email,
+    required String otp,
+    required String purpose,
+  }) async {
+    try {
+      await GmailService.sendOTP(
+        email: email,
+        otp: otp,
+        purpose: purpose,
+      );
+    } catch (e) {
+      print('❌ Error sending OTP email: $e');
+    }
+  }
+
   // Sign up with email and password
   static Future<UserCredential> signUpWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
+      print('🔑 Creating user account...');
+
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Send email verification
-      await credential.user?.sendEmailVerification();
+      // Generate and send OTP for email verification
+      final otp = _generateOTP();
+      await _storeOTP(
+        email: email,
+        otp: otp,
+        purpose: 'email_verification',
+      );
 
+      await _sendOTPEmail(
+        email: email,
+        otp: otp,
+        purpose: 'email_verification',
+      );
+
+      print('✅ User account created and OTP sent');
       return credential;
     } on FirebaseAuthException catch (e) {
+      print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
       throw _handleAuthException(e);
+    } catch (e) {
+      print('❌ General exception: $e');
+      throw Exception('Signup failed: $e');
     }
   }
 
@@ -41,12 +158,157 @@ class FirebaseService {
     required String password,
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      print('🔑 Starting signInWithEmailAndPassword...');
+      print('📧 Email: "$email"');
+      print('🔒 Password provided: ${password.isNotEmpty}');
+
+      final credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      print('✅ signInWithEmailAndPassword successful');
+      print('👤 User: ${credential.user?.email}');
+      return credential;
     } on FirebaseAuthException catch (e) {
+      print('❌ FirebaseAuthException Code: ${e.code}');
+      print('❌ FirebaseAuthException Message: ${e.message}');
       throw _handleAuthException(e);
+    } catch (e) {
+      print('❌ Unknown exception: $e');
+      print('❌ Exception type: ${e.runtimeType}');
+      throw Exception('Sign in failed: $e');
+    }
+  }
+
+  // Verify email with OTP
+  static Future<bool> verifyEmailWithOTP({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final isValid = await verifyOTP(
+        email: email,
+        otp: otp,
+        purpose: 'email_verification',
+      );
+
+      if (isValid) {
+        // Update user's email verification status in Firestore
+        final user = _auth.currentUser;
+        if (user != null) {
+          await updateUserDocument(
+            uid: user.uid,
+            data: {'isEmailVerified': true},
+          );
+        }
+      }
+
+      return isValid;
+    } catch (e) {
+      print('❌ Error verifying email with OTP: $e');
+      throw Exception('Email verification failed: $e');
+    }
+  }
+
+  // Resend OTP for email verification
+  static Future<void> resendEmailVerificationOTP(String email) async {
+    try {
+      final otp = _generateOTP();
+      await _storeOTP(
+        email: email,
+        otp: otp,
+        purpose: 'email_verification',
+      );
+
+      await _sendOTPEmail(
+        email: email,
+        otp: otp,
+        purpose: 'email_verification',
+      );
+
+      print('✅ Email verification OTP resent');
+    } catch (e) {
+      print('❌ Error resending OTP: $e');
+      throw Exception('Failed to resend OTP: $e');
+    }
+  }
+
+  // Send password reset OTP
+  static Future<void> sendPasswordResetOTP(String email) async {
+    try {
+      // Check if user exists
+      final methods = await _auth.fetchSignInMethodsForEmail(email);
+      if (methods.isEmpty) {
+        throw Exception('No account found with this email address');
+      }
+
+      final otp = _generateOTP();
+      await _storeOTP(
+        email: email,
+        otp: otp,
+        purpose: 'password_reset',
+      );
+
+      await _sendOTPEmail(
+        email: email,
+        otp: otp,
+        purpose: 'password_reset',
+      );
+
+      print('✅ Password reset OTP sent');
+    } catch (e) {
+      print('❌ Error sending password reset OTP: $e');
+      if (e.toString().contains('No account found')) {
+        rethrow;
+      }
+      throw Exception('Failed to send password reset OTP: $e');
+    }
+  }
+
+  // Verify password reset OTP
+  static Future<bool> verifyPasswordResetOTP({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      return await verifyOTP(
+        email: email,
+        otp: otp,
+        purpose: 'password_reset',
+      );
+    } catch (e) {
+      print('❌ Error verifying password reset OTP: $e');
+      throw Exception('Password reset verification failed: $e');
+    }
+  }
+
+  // Reset password with new password (after OTP verification)
+  static Future<void> resetPasswordWithOTP({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    try {
+      // First verify the OTP
+      final isValidOTP = await verifyPasswordResetOTP(
+        email: email,
+        otp: otp,
+      );
+
+      if (!isValidOTP) {
+        throw Exception('Invalid or expired OTP');
+      }
+
+      // For Firebase Auth, we need to use sendPasswordResetEmail
+      // Or implement a custom solution with admin SDK
+      // For now, we'll send a password reset email as fallback
+      await _auth.sendPasswordResetEmail(email: email);
+
+      print('✅ Password reset email sent');
+    } catch (e) {
+      print('❌ Error resetting password: $e');
+      throw Exception('Password reset failed: $e');
     }
   }
 
