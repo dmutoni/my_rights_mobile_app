@@ -167,6 +167,8 @@ class FirebaseService {
         return 'The password provided is too weak.';
       case 'email-already-in-use':
         return 'The account already exists for that email.';
+      case 'invalid-credential':
+        return 'Invalid credentials, Please try again.';
       case 'user-not-found':
         return 'No user found for that email.';
       case 'wrong-password':
@@ -225,11 +227,13 @@ class FirebaseService {
     }
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream(String collection) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream(
+      String collection) {
     return _firestore.collection(collection).snapshots();
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> getCollection(String collection) {
+  static Future<QuerySnapshot<Map<String, dynamic>>> getCollection(
+      String collection) {
     return _firestore.collection(collection).get();
   }
 
@@ -252,7 +256,10 @@ class FirebaseService {
     required String field,
     required dynamic value,
   }) {
-    return _firestore.collection(collection).where(field, isEqualTo: value).snapshots();
+    return _firestore
+        .collection(collection)
+        .where(field, isEqualTo: value)
+        .snapshots();
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentArrayQuery({
@@ -260,7 +267,10 @@ class FirebaseService {
     required String field,
     required dynamic value,
   }) {
-    return _firestore.collection(collection).where(field, arrayContains: value).snapshots();
+    return _firestore
+        .collection(collection)
+        .where(field, arrayContains: value)
+        .snapshots();
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getInnerDocument({
@@ -271,36 +281,38 @@ class FirebaseService {
     String? anotherCollection,
     String? orderByField,
   }) {
-    if (anotherCollection != null && innerDocId != null && orderByField != null) {
+    if (anotherCollection != null &&
+        innerDocId != null &&
+        orderByField != null) {
       return _firestore
-        .collection(collection)
-        .doc(docId)
-        .collection(innerCollection)
-        .doc(innerDocId)
-        .collection(anotherCollection)
-        .orderBy(orderByField)
-        .snapshots();
+          .collection(collection)
+          .doc(docId)
+          .collection(innerCollection)
+          .doc(innerDocId)
+          .collection(anotherCollection)
+          .orderBy(orderByField)
+          .snapshots();
     } else if (anotherCollection != null && innerDocId != null) {
       return _firestore
-        .collection(collection)
-        .doc(docId)
-        .collection(innerCollection)
-        .doc(innerDocId)
-        .collection(anotherCollection)
-        .snapshots();
+          .collection(collection)
+          .doc(docId)
+          .collection(innerCollection)
+          .doc(innerDocId)
+          .collection(anotherCollection)
+          .snapshots();
     } else if (orderByField != null) {
       return _firestore
-        .collection(collection)
-        .doc(docId)
-        .collection(innerCollection)
-        .orderBy(orderByField)
-        .snapshots();
+          .collection(collection)
+          .doc(docId)
+          .collection(innerCollection)
+          .orderBy(orderByField)
+          .snapshots();
     } else {
       return _firestore
-        .collection(collection)
-        .doc(docId)
-        .collection(innerCollection)
-        .snapshots();
+          .collection(collection)
+          .doc(docId)
+          .collection(innerCollection)
+          .snapshots();
     }
   }
 }
