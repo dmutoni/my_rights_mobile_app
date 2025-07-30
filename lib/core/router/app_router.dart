@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
