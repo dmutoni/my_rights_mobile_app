@@ -110,7 +110,7 @@ class ProfileScreen extends ConsumerWidget {
         const SizedBox(height: 16),
         _buildSettingsItem(
           context,
-          icon: MingCuteIcons.mgc_globe_line,
+          icon: MingCuteIcons.mgc_globe_2_fill,
           title: 'Change language',
           onTap: () => _showLanguageDialog(context),
         ),
@@ -138,40 +138,28 @@ class ProfileScreen extends ConsumerWidget {
     required String title,
     required VoidCallback onTap,
   }) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: Icon(
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppColors.inputBorder,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
           icon,
           color: AppColors.textPrimary,
           size: 24,
         ),
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-        ),
-        trailing: const Icon(
-          MingCuteIcons.mgc_arrow_right_line,
-          color: AppColors.textLight,
-          size: 20,
-        ),
-        onTap: onTap,
       ),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+      ),
+      onTap: onTap,
     );
   }
 
@@ -196,19 +184,7 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   void _showHelpDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Help'),
-        content: const Text('Help and support will be implemented here.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+    context.push(AppRouter.help);
   }
 
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
