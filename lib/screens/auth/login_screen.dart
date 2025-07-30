@@ -39,7 +39,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       print(
           ' Login state: $authState ${authState.isAuthenticated}, User: ${authState.user}');
       if (authState.isAuthenticated) {
-        context.go('/home');
+        // Navigate to home screen
+        context.go(AppRouter.home);
       } else if (authState.error != null) {
         // Show error message
         if (mounted) {
