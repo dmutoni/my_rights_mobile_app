@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 
 class HelpScreen extends ConsumerWidget {
   const HelpScreen({super.key});
@@ -11,7 +11,22 @@ class HelpScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: CustomAppBar(title: 'Help'),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          'Help',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
