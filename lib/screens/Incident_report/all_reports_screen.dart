@@ -37,36 +37,9 @@ class AllReportsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: CustomAppBar(
+      appBar: const CustomAppBar(
         title: 'My Reports',
         showBackButton: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
-            onPressed: () {
-              print('Manual refresh triggered');
-              ref.read(incidentReportProvider.notifier).refreshUserReports();
-            },
-          ),
-          // Debug button
-          if (const bool.fromEnvironment('dart.vm.product') == false)
-            IconButton(
-              icon: const Icon(Icons.bug_report, color: Colors.red),
-              onPressed: () {
-                final state = ref.read(incidentReportProvider);
-                final authState = ref.read(authProvider);
-                print('=== DEBUG STATE ===');
-                print('User reports count: ${state.userReports.length}');
-                print('Current report: ${state.currentReport?.title}');
-                print('Is loading: ${state.isLoading}');
-                print('Error: ${state.error}');
-                print('Auth user ID: ${authState.user?.id}');
-                print('Auth user name: ${authState.user?.name}');
-                print('Auth is authenticated: ${authState.isAuthenticated}');
-                print('==================');
-              },
-            ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
