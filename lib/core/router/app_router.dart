@@ -19,6 +19,7 @@ import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.
 import 'package:my_rights_mobile_app/models/incident_report_model.dart';
 import 'package:my_rights_mobile_app/screens/profile/profile_screen.dart';
 import 'package:my_rights_mobile_app/screens/profile/edit_profile_screen.dart';
+import 'package:my_rights_mobile_app/screens/profile/help_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -31,6 +32,7 @@ class AppRouter {
   static const String learn = '/learn';
   static const String aid = '/aid';
   static const String profile = '/profile';
+  static const String help = '/help';
   static const String incidentReport = '/incident-report';
 
   static final GoRouter router = GoRouter(
@@ -155,6 +157,11 @@ class AppRouter {
             builder: (context, state) => const EditProfileScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: help,
+        name: 'help',
+        builder: (context, state) => const HelpScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
