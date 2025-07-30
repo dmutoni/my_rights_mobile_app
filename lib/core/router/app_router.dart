@@ -16,6 +16,7 @@ import 'package:my_rights_mobile_app/screens/auth/login_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/signup_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/lesson_screen.dart';
 import 'package:my_rights_mobile_app/screens/learn/quiz_screen.dart';
+import 'package:my_rights_mobile_app/screens/profile/profile_details_screen.dart';
 import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
@@ -191,6 +192,11 @@ class AppRouter {
             ),
           ],
         ),
+        GoRoute(
+          path: profile,
+          name: 'profile',
+          builder: (context, state) => const ProfileDetailsScreen(),
+        )
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(
