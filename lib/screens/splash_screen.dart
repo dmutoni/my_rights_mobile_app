@@ -48,24 +48,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   void _startAnimation() async {
     await _animationController.forward();
-
-    // Wait for animation to complete
     await Future.delayed(const Duration(seconds: 1));
 
-    // Check authentication status and navigate accordingly
     if (mounted) {
       final authState = ref.read(authProvider);
 
-      print('🚀 Splash navigation decision:');
-      print('   Is authenticated: ${authState.isAuthenticated}');
-      print('   Is loading: ${authState.isLoading}');
-      print('   User: ${authState.user?.email ?? "null"}');
-
       if (authState.isAuthenticated && authState.user != null) {
-        print('   ➡️ Navigating to home');
         context.go(AppRouter.home);
       } else {
-        print('   ➡️ Navigating to welcome');
         context.go(AppRouter.welcome);
       }
     }
@@ -79,13 +69,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Listen to auth changes during splash
-    ref.listen<AuthState>(authProvider, (previous, next) {
-      print('🔄 Auth state changed during splash:');
-      print('   Previous: ${previous?.isAuthenticated ?? false}');
-      print('   Next: ${next.isAuthenticated}');
-      print('   User: ${next.user?.email ?? "null"}');
-    });
+    ref.listen<AuthState>(authProvider, (previous, next) {});
 
     return Scaffold(
       body: Container(

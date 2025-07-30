@@ -25,13 +25,13 @@ class MyRightsApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Create router with authentication awareness
+    final router = AppRouter.createRouter(ref);
 
     return MaterialApp.router(
       title: 'MyRights',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
+      routerConfig: router,
     );
   }
 }
