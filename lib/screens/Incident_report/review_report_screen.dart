@@ -12,6 +12,8 @@ import '../../shared/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 import '../../shared/widgets/empty_card.dart';
+import '../../shared/widgets/audio_panel.dart';
+import '../../shared/widgets/video_panel.dart';
 
 class ReviewReportScreen extends ConsumerWidget {
   const ReviewReportScreen({super.key});
@@ -35,7 +37,7 @@ class ReviewReportScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Review Report'),
+      appBar: const CustomAppBar(title: 'Review Report', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView(
@@ -71,18 +73,17 @@ class ReviewReportScreen extends ConsumerWidget {
                     ),
                   )),
             if (report.videoUrls.isNotEmpty)
-              ...report.videoUrls.map((url) => ListTile(
-                    leading: const Icon(Icons.videocam_outlined),
-                    title: Text('Video Evidence'),
-                    subtitle: Text(url),
-                    onTap: () {},
+              ...report.videoUrls.map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: VideoPanel(videoUrl: url),
                   )),
             if (report.audioUrls.isNotEmpty)
-              ...report.audioUrls.map((url) => ListTile(
-                    leading: const Icon(Icons.mic_none_outlined),
-                    title: Text('Audio Evidence'),
-                    subtitle: Text(url),
-                    onTap: () {},
+              ...report.audioUrls.map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: AudioPanel(
+                      audioUrl: url,
+                      title: 'Audio Evidence',
+                    ),
                   )),
             if (report.photoUrls.isEmpty &&
                 report.videoUrls.isEmpty &&

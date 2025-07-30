@@ -15,7 +15,10 @@ import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/report_incident_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/review_report_screen.dart';
+import 'package:my_rights_mobile_app/screens/incident_report/submission_confirmation_screen.dart';
 import 'package:my_rights_mobile_app/models/incident_report_model.dart';
 
 class AppRouter {
@@ -128,6 +131,11 @@ class AppRouter {
             builder: (context, state) => const ReportAbuseScreen(),
           ),
           GoRoute(
+            path: 'report-incident',
+            name: 'reportIncident',
+            builder: (context, state) => const ReportIncidentScreen(),
+          ),
+          GoRoute(
             path: 'view-report',
             name: 'viewReport',
             builder: (context, state) {
@@ -139,6 +147,16 @@ class AppRouter {
               }
               return ViewReportScreen(report: report);
             },
+          ),
+          GoRoute(
+            path: 'review-report',
+            name: 'reviewReport',
+            builder: (context, state) => const ReviewReportScreen(),
+          ),
+          GoRoute(
+            path: 'submission-confirmation',
+            name: 'submissionConfirmation',
+            builder: (context, state) => const SubmissionConfirmationScreen(),
           ),
         ],
       ),

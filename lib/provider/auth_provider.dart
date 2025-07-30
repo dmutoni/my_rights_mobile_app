@@ -43,9 +43,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void _onAuthStateChanged(User? firebaseUser) async {
     if (firebaseUser != null) {
+      print('Auth: Firebase user found - UID: ${firebaseUser.uid}');
       try {
         final userDoc = await FirebaseService.getUserDocument(firebaseUser.uid);
         if (userDoc != null) {
+          print('Auth: User document found - ID: ${userDoc.id}, Name: ${userDoc.name}');
           state = state.copyWith(
             isAuthenticated: true,
             isLoading: false,
@@ -53,6 +55,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             isEmailVerified: firebaseUser.emailVerified,
           );
         } else {
+          print('Auth: Creating new user document for UID: ${firebaseUser.uid}');
           await FirebaseService.createUserDocument(
             uid: firebaseUser.uid,
             name: firebaseUser.displayName ?? '',
@@ -61,6 +64,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
           final newUserDoc =
               await FirebaseService.getUserDocument(firebaseUser.uid);
+          print('Auth: New user document created - ID: ${newUserDoc?.id}, Name: ${newUserDoc?.name}');
           state = state.copyWith(
             isAuthenticated: true,
             isLoading: false,
@@ -69,12 +73,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         }
       } catch (e) {
+        print('Auth: Error loading user data: $e');
         state = state.copyWith(
           isLoading: false,
           error: 'Failed to load user data: $e',
         );
       }
     } else {
+      print('Auth: No Firebase user found');
       state = const AuthState();
     }
   }

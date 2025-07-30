@@ -106,7 +106,7 @@ class FirebaseService {
     try {
       final doc = await _firestore.collection('users').doc(uid).get();
       if (doc.exists) {
-        return UserModel.fromJson(doc.data()!);
+        return UserModel.fromJson(doc.data()!, documentId: doc.id);
       }
       return null;
     } catch (e) {

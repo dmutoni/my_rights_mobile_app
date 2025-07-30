@@ -5,6 +5,9 @@ import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_app_bar.dart';
+import '../../provider/report_type_provider.dart';
+import '../../shared/widgets/audio_panel.dart';
+import '../../shared/widgets/video_panel.dart';
 
 class ViewReportScreen extends ConsumerWidget {
   final IncidentReport report;
@@ -12,8 +15,10 @@ class ViewReportScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final reportType = ref.watch(reportTypeByIdProvider(report.reportTypeId));
+    
     return Scaffold(
-      appBar: CustomAppBar(title: report.title),
+      appBar: CustomAppBar(title: report.title, showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView(
@@ -42,6 +47,34 @@ class ViewReportScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
+            // Display report type
+            if (reportType != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _getIconFromString(reportType.icon),
+                      color: Colors.blue[700],
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      reportType.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -60,44 +93,58 @@ class ViewReportScreen extends ConsumerWidget {
             const Text('Evidence',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            CustomList(
-              items: [
-                if (report.photoUrls.isNotEmpty)
-                  CustomListItem(
-                    icon: Icons.photo_library_outlined,
-                    title: 'Photo Evidence',
-                    onTap: () {},
-                  ),
-                if (report.videoUrls.isNotEmpty)
-                  CustomListItem(
-                    icon: Icons.videocam_outlined,
-                    title: 'Video Evidence',
-                    onTap: () {},
-                  ),
-                if (report.audioUrls.isNotEmpty)
-                  CustomListItem(
-                    icon: Icons.mic_none_outlined,
-                    title: 'Audio Evidence',
-                    onTap: () {},
-                  ),
-              ],
-            ),
-            const SizedBox(height: 16),
             if (report.photoUrls.isNotEmpty)
-              Container(
-                height: 160,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(
-                    image: NetworkImage(report.photoUrls.first),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              ...report.photoUrls.map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(url, height: 160, fit: BoxFit.cover),
+                    ),
+                  )),
+            if (report.videoUrls.isNotEmpty)
+              ...report.videoUrls.map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: VideoPanel(videoUrl: url),
+                  )),
+            if (report.audioUrls.isNotEmpty)
+              ...report.audioUrls.map((url) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: AudioPanel(
+                      audioUrl: url,
+                      title: 'Audio Evidence',
+                    ),
+                  )),
+            if (report.photoUrls.isEmpty &&
+                report.videoUrls.isEmpty &&
+                report.audioUrls.isEmpty)
+              const Text('No evidence attached.'),
           ],
         ),
       ),
       bottomNavigationBar: const CustomBottomNavBar(),
     );
+  }
+
+  IconData _getIconFromString(String iconName) {
+    switch (iconName) {
+      case 'attach_money':
+        return Icons.attach_money;
+      case 'shield_outlined':
+        return Icons.shield_outlined;
+      case 'people_outline':
+        return Icons.people_outline;
+      case 'gavel_outlined':
+        return Icons.gavel_outlined;
+      case 'security':
+        return Icons.security;
+      case 'eco':
+        return Icons.eco;
+      case 'work':
+        return Icons.work;
+      case 'help_outline':
+        return Icons.help_outline;
+      default:
+        return Icons.report_problem_outlined;
+    }
   }
 }

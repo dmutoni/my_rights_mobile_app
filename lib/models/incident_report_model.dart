@@ -14,6 +14,7 @@ class IncidentReport {
   final DateTime date;
   final String location;
   final String description;
+  final String reportTypeId;
   final List<String> photoUrls;
   final List<String> videoUrls;
   final List<String> audioUrls;
@@ -30,6 +31,7 @@ class IncidentReport {
     required this.date,
     required this.location,
     required this.description,
+    required this.reportTypeId,
     this.photoUrls = const [],
     this.videoUrls = const [],
     this.audioUrls = const [],
@@ -47,6 +49,7 @@ class IncidentReport {
     required DateTime date,
     required String location,
     required String description,
+    required String reportTypeId,
     required bool isAnonymous,
   }) {
     final now = DateTime.now();
@@ -59,6 +62,7 @@ class IncidentReport {
       date: date,
       location: location,
       description: description,
+      reportTypeId: reportTypeId,
       isAnonymous: isAnonymous,
       trackingNumber: trackingNumber,
       createdAt: now,
@@ -76,6 +80,7 @@ class IncidentReport {
       date: (data['date'] as Timestamp).toDate(),
       location: data['location'] ?? '',
       description: data['description'] ?? '',
+      reportTypeId: data['reportTypeId'] ?? '',
       photoUrls: List<String>.from(data['photoUrls'] ?? []),
       videoUrls: List<String>.from(data['videoUrls'] ?? []),
       audioUrls: List<String>.from(data['audioUrls'] ?? []),
@@ -98,6 +103,7 @@ class IncidentReport {
       'date': Timestamp.fromDate(date),
       'location': location,
       'description': description,
+      'reportTypeId': reportTypeId,
       'photoUrls': photoUrls,
       'videoUrls': videoUrls,
       'audioUrls': audioUrls,
@@ -117,6 +123,7 @@ class IncidentReport {
     DateTime? date,
     String? location,
     String? description,
+    String? reportTypeId,
     List<String>? photoUrls,
     List<String>? videoUrls,
     List<String>? audioUrls,
@@ -133,6 +140,7 @@ class IncidentReport {
       date: date ?? this.date,
       location: location ?? this.location,
       description: description ?? this.description,
+      reportTypeId: reportTypeId ?? this.reportTypeId,
       photoUrls: photoUrls ?? this.photoUrls,
       videoUrls: videoUrls ?? this.videoUrls,
       audioUrls: audioUrls ?? this.audioUrls,

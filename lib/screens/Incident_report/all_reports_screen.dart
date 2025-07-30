@@ -8,6 +8,8 @@ import '../../shared/widgets/custom_app_bar.dart';
 import '../../shared/widgets/empty_card.dart';
 import '../../core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/router/app_router.dart';
+import '../../provider/auth_provider.dart';
 
 class AllReportsScreen extends ConsumerWidget {
   const AllReportsScreen({super.key});
@@ -15,9 +17,57 @@ class AllReportsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reports = ref.watch(userReportsProvider);
+    final authState = ref.watch(authProvider);
+
+    // Debug: Print current user info
+    if (authState.user != null) {
+      print('Current user ID: ${authState.user!.id}');
+      print('Current user name: ${authState.user!.name}');
+    } else {
+      print('No user authenticated');
+    }
+
+    // Debug: Print reports info
+    print('AllReportsScreen: Found ${reports.length} reports');
+    for (int i = 0; i < reports.length; i++) {
+      print(
+          'Report $i: ${reports[i].title} (ID: ${reports[i].id}, UserID: ${reports[i].userId})');
+    }
+
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: CustomAppBar(title: 'My Reports'),
+      appBar: CustomAppBar(
+        title: 'My Reports',
+        showBackButton: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.black),
+            onPressed: () {
+              print('Manual refresh triggered');
+              ref.read(incidentReportProvider.notifier).refreshUserReports();
+            },
+          ),
+          // Debug button
+          if (const bool.fromEnvironment('dart.vm.product') == false)
+            IconButton(
+              icon: const Icon(Icons.bug_report, color: Colors.red),
+              onPressed: () {
+                final state = ref.read(incidentReportProvider);
+                final authState = ref.read(authProvider);
+                print('=== DEBUG STATE ===');
+                print('User reports count: ${state.userReports.length}');
+                print('Current report: ${state.currentReport?.title}');
+                print('Is loading: ${state.isLoading}');
+                print('Error: ${state.error}');
+                print('Auth user ID: ${authState.user?.id}');
+                print('Auth user name: ${authState.user?.name}');
+                print('Auth is authenticated: ${authState.isAuthenticated}');
+                print('==================');
+              },
+            ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
         child: reports.isEmpty
@@ -49,7 +99,7 @@ class AllReportsScreen extends ConsumerWidget {
                                                 : AppColors.error,
                                 onTap: () {
                                   context.go(
-                                    '/incident-report/view-report',
+                                    '${AppRouter.incidentReport}/view-report',
                                     extra: report,
                                   );
                                 },
@@ -67,7 +117,7 @@ class AllReportsScreen extends ConsumerWidget {
         label: Text('New Report',
             style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
         onPressed: () {
-          context.go('/incident-report/report-abuse');
+          context.go('${AppRouter.incidentReport}/report-abuse');
         },
       ),
       bottomNavigationBar: const CustomBottomNavBar(),

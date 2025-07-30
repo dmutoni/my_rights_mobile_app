@@ -31,7 +31,8 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
       );
     }
     return Scaffold(
-      appBar: CustomAppBar(title: 'Submission Confirmation'),
+      appBar: const CustomAppBar(
+          title: 'Submission Confirmation', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
