@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,9 +28,14 @@ void main() async {
 class MyRightsApp extends ConsumerWidget {
   const MyRightsApp({super.key});
 
+  static bool _hasBeenBuilt = false;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = AppRouter.createRouter(ref);
+    final skipSplash = kDebugMode && _hasBeenBuilt;
+    _hasBeenBuilt = true;
+
+    final router = AppRouter.createRouter(ref, skipSplash: skipSplash);
 
     return MaterialApp.router(
       title: 'MyRights',

@@ -42,20 +42,28 @@ class AppRouter {
   static const String help = '/help';
   static const String incidentReport = '/incident-report';
 
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
-  static GoRouter createRouter(WidgetRef ref) {
+  static GoRouter createRouter(WidgetRef ref, {bool skipSplash = false}) {
     return GoRouter(
-      initialLocation: splash,
+      initialLocation: skipSplash ? home : splash,
       refreshListenable: _AuthChangeNotifier(ref),
       redirect: (BuildContext context, GoRouterState state) {
         final authState = ref.read(authProvider);
         final currentPath = state.uri.path;
 
         // Don't redirect if we're on splash (let splash handle navigation)
-        if (currentPath == splash) {
+        if (currentPath == splash && !skipSplash) {
           return null;
+        }
+
+        // If we're skipping splash and on splash, redirect based on auth state
+        if (currentPath == splash && skipSplash) {
+          if (authState.isAuthenticated) {
+            return home;
+          } else {
+            return welcome;
+          }
         }
 
         // Don't redirect while loading unless we're sure about the state

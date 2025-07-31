@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:my_rights_mobile_app/service/cloudinary_service.dart';
 import '../models/incident_report_model.dart';
-import 'package:path/path.dart' as path;
 
 class IncidentReportService {
   static final _firestore = FirebaseFirestore.instance;
@@ -138,24 +137,6 @@ class IncidentReportService {
       print('Error uploading file: $e at $stackTrace');
       print('Error details: ${e.toString()}');
       rethrow;
-    }
-  }
-
-// Helper function to determine content type
-  static String _getContentType(File file) {
-    final extension = path.extension(file.path).toLowerCase();
-    switch (extension) {
-      case '.jpg':
-      case '.jpeg':
-        return 'image/jpeg';
-      case '.png':
-        return 'image/png';
-      case '.pdf':
-        return 'application/pdf';
-      case '.mp4':
-        return 'video/mp4';
-      default:
-        return 'application/octet-stream';
     }
   }
 
