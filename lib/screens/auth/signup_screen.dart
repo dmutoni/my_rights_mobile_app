@@ -40,24 +40,22 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           );
 
       final authState = ref.read(authProvider);
-      if (authState.user != null && !authState.isAuthenticated) {
-        context
-            .go('${AppRouter.confirmAccount}?email=${_emailController.text}');
+
+      // Check if signup was successful (OTP sent)
+      if (authState.isAwaitingOTPVerification && authState.error == null) {
+        // Navigate to OTP verification screen
+        if (mounted) {
+          context
+              .go('${AppRouter.confirmAccount}?email=${_emailController.text}');
+        }
       } else if (authState.error != null) {
+        // Show error message
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(authState.error!),
               backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      } else {
-        try {} catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString()),
-              backgroundColor: AppColors.error,
+              duration: const Duration(seconds: 4),
             ),
           );
         }
@@ -87,15 +85,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 20),
 
+                // Description
                 const Text(
                   'Sign up now to access all legal knowledge and\naccess to justice in Rwanda',
                   style: TextStyle(
@@ -105,8 +105,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
 
+                // Name field
                 CustomTextField(
                   label: 'Name',
                   hint: 'Enter your full name',
@@ -117,6 +118,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
+                // Email field
                 CustomTextField(
                   label: 'Email',
                   hint: 'Enter your email',
@@ -127,6 +129,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
+                // Password field
                 CustomTextField(
                   label: 'Password',
                   hint: 'Create a password',
@@ -137,6 +140,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                 const SizedBox(height: 20),
 
+                // Confirm password field
                 CustomTextField(
                   label: 'Confirm Password',
                   hint: 'Confirm your password',
@@ -148,7 +152,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
+
+                // Sign up button
                 CustomButton(
                   text: 'Sign Up',
                   width: double.infinity,
@@ -156,7 +162,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   onPressed: _handleSignup,
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 32),
 
                 // Login link
                 Row(
@@ -182,6 +188,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                   ],
                 ),
+
+                // Add some bottom padding for better UX
+                const SizedBox(height: 24),
               ],
             ),
           ),

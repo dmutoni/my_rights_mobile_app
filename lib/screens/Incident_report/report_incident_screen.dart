@@ -19,7 +19,8 @@ class ReportIncidentScreen extends ConsumerStatefulWidget {
   const ReportIncidentScreen({super.key});
 
   @override
-  ConsumerState<ReportIncidentScreen> createState() => _ReportIncidentScreenState();
+  ConsumerState<ReportIncidentScreen> createState() =>
+      _ReportIncidentScreenState();
 }
 
 class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
@@ -121,7 +122,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     }
 
     final notifier = ref.read(incidentReportProvider.notifier);
-    
+
     try {
       // Create the report
       await notifier.createReport(
@@ -297,7 +298,8 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              const Text('Evidence (Optional)', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Evidence (Optional)',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined),
@@ -318,11 +320,15 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
               DropdownButtonFormField<String>(
                 value: _anonymity,
                 items: const [
-                  DropdownMenuItem(value: 'Select', child: Text('Select Anonymity')),
-                  DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
-                  DropdownMenuItem(value: 'Not Anonymous', child: Text('Not Anonymous')),
+                  DropdownMenuItem(
+                      value: 'Select', child: Text('Select Anonymity')),
+                  DropdownMenuItem(
+                      value: 'Anonymous', child: Text('Anonymous')),
+                  DropdownMenuItem(
+                      value: 'Not Anonymous', child: Text('Not Anonymous')),
                 ],
-                onChanged: (val) => setState(() => _anonymity = val ?? 'Select'),
+                onChanged: (val) =>
+                    setState(() => _anonymity = val ?? 'Select'),
                 decoration: const InputDecoration(labelText: 'Anonymity'),
               ),
               const SizedBox(height: 32),

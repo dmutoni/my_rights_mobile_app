@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
 import 'confirm_submit_dialog.dart';
-import 'submission_confirmation_screen.dart';
 import '../../models/incident_report_model.dart';
-import 'report_incident_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
-import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
@@ -49,7 +46,7 @@ class ReviewReportScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                    'Incident Type: ${report.description.length > 20 ? report.description.substring(0, 20) + '...' : report.description}'),
+                    'Incident Type: ${report.description.length > 20 ? '${report.description.substring(0, 20)}...' : report.description}'),
                 Text('Location: ${report.location}'),
               ],
             ),

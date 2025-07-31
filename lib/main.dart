@@ -24,16 +24,18 @@ void main() async {
   );
 }
 
-class MyRightsApp extends StatelessWidget {
+class MyRightsApp extends ConsumerWidget {
   const MyRightsApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = AppRouter.createRouter(ref);
+
     return MaterialApp.router(
       title: 'MyRights',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
+      routerConfig: router,
     );
   }
 }
