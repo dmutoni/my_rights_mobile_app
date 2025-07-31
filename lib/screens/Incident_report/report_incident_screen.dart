@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import '../../shared/widgets/custom_text_fields.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
-import 'review_report_screen.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
@@ -17,7 +16,8 @@ class ReportIncidentScreen extends ConsumerStatefulWidget {
   const ReportIncidentScreen({super.key});
 
   @override
-  ConsumerState<ReportIncidentScreen> createState() => _ReportIncidentScreenState();
+  ConsumerState<ReportIncidentScreen> createState() =>
+      _ReportIncidentScreenState();
 }
 
 class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
@@ -27,7 +27,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
   final _locationController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _anonymity = 'Select';
-  
+
   final List<File> _photos = [];
   final List<File> _videos = [];
   final List<File> _audios = [];
@@ -97,7 +97,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     }
 
     final notifier = ref.read(incidentReportProvider.notifier);
-    
+
     try {
       // Create the report
       await notifier.createReport(
@@ -219,7 +219,8 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              const Text('Evidence (Optional)', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Evidence (Optional)',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined),
@@ -240,11 +241,15 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
               DropdownButtonFormField<String>(
                 value: _anonymity,
                 items: const [
-                  DropdownMenuItem(value: 'Select', child: Text('Select Anonymity')),
-                  DropdownMenuItem(value: 'Anonymous', child: Text('Anonymous')),
-                  DropdownMenuItem(value: 'Not Anonymous', child: Text('Not Anonymous')),
+                  DropdownMenuItem(
+                      value: 'Select', child: Text('Select Anonymity')),
+                  DropdownMenuItem(
+                      value: 'Anonymous', child: Text('Anonymous')),
+                  DropdownMenuItem(
+                      value: 'Not Anonymous', child: Text('Not Anonymous')),
                 ],
-                onChanged: (val) => setState(() => _anonymity = val ?? 'Select'),
+                onChanged: (val) =>
+                    setState(() => _anonymity = val ?? 'Select'),
                 decoration: const InputDecoration(labelText: 'Anonymity'),
               ),
               const SizedBox(height: 32),
@@ -260,4 +265,4 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
       bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
-} 
+}
