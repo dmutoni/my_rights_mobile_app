@@ -255,50 +255,6 @@ class _ConfirmAccountScreenState extends ConsumerState<ConfirmAccountScreen> {
                 ],
               ),
 
-              const SizedBox(height: 40),
-
-              // Info boxes
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.info.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.info.withOpacity(0.3)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.info_outline,
-                          color: AppColors.info,
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Check your email',
-                          style: TextStyle(
-                            color: AppColors.info,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '• The code will expire in 10 minutes\n• Check your spam/junk folder\n• Make sure you entered the correct email',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               const SizedBox(height: 24),
 
               // Email display

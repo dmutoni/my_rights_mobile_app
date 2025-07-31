@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:my_rights_mobile_app/core/utils/email_sender.dart';
 import 'package:my_rights_mobile_app/models/user_model.dart';
 
@@ -309,6 +310,58 @@ class FirebaseService {
     } catch (e) {
       print('❌ Error resetting password: $e');
       throw Exception('Password reset failed: $e');
+    }
+  }
+
+  static Future<UserCredential> signInWithGoogle() async {
+    try {
+      print('🔑 Starting Google Sign-In...');
+
+      // Initialize Google Sign-In
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      // Trigger the authentication flow
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
+
+      print('✅ Google account selected: ${googleUser.email}');
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.idToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final userCredential = await _auth.signInWithCredential(credential);
+
+      print('✅ Firebase authentication successful');
+
+      // Check if user document exists, create if not
+      final userDoc = await getUserDocument(userCredential.user!.uid);
+      if (userDoc == null) {
+        await createUserDocument(
+          uid: userCredential.user!.uid,
+          name: userCredential.user?.displayName ?? '',
+          email: userCredential.user?.email ?? '',
+        );
+
+        // Mark as email verified since Google handles email verification
+        await updateUserDocument(
+          uid: userCredential.user!.uid,
+          data: {'isEmailVerified': true},
+        );
+      }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
+      throw _handleAuthException(e);
+    } catch (e) {
+      print('❌ Google Sign-In error: $e');
+      throw Exception('Google Sign-In failed: $e');
     }
   }
 

@@ -64,9 +64,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final userDoc = await FirebaseService.getUserDocument(firebaseUser.uid);
 
         if (userDoc != null) {
-          print('✅ User document found: ${userDoc.email}');
-          print('📧 Email verified status: ${userDoc.isEmailVerified}');
-
           // Set the NEW user data
           state = state.copyWith(
             isAuthenticated: userDoc
@@ -171,7 +168,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Verify OTP for email verification
   Future<void> verifyEmailOTP(String email, String otp) async {
-    print('🔍 Verifying email OTP for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -356,6 +352,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       await FirebaseService.deleteAccount();
     } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    print('🔑 Starting Google Sign-In...');
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final credential = await FirebaseService.signInWithGoogle();
+
+      print('✅ Google Sign-In successful for: ${credential.user?.email}');
+    } catch (e) {
+      print('❌ Google Sign-In error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
