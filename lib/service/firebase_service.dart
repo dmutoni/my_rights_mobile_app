@@ -146,7 +146,7 @@ class FirebaseService {
       return credential;
     } on FirebaseAuthException catch (e) {
       print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     } catch (e) {
       print('❌ General exception: $e');
       throw Exception('Signup failed: $e');
@@ -174,7 +174,7 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       print('❌ FirebaseAuthException Code: ${e.code}');
       print('❌ FirebaseAuthException Message: ${e.message}');
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     } catch (e) {
       print('❌ Unknown exception: $e');
       print('❌ Exception type: ${e.runtimeType}');
@@ -358,7 +358,7 @@ class FirebaseService {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     } catch (e) {
       print('❌ Google Sign-In error: $e');
       throw Exception('Google Sign-In failed: $e');
@@ -375,7 +375,7 @@ class FirebaseService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     }
   }
 
@@ -384,7 +384,7 @@ class FirebaseService {
     try {
       await _auth.currentUser?.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     }
   }
 
@@ -476,7 +476,7 @@ class FirebaseService {
   static bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
 
   // Handle Firebase Auth exceptions
-  static String _handleAuthException(FirebaseAuthException e) {
+  static String handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':
         return 'The password provided is too weak.';
