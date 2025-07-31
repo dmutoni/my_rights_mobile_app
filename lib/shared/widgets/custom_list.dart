@@ -83,10 +83,10 @@ class CustomList extends StatelessWidget {
       children: items
           .map(
             (item) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: item,
-        ),
-      )
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: item,
+            ),
+          )
           .toList(),
     );
   }

@@ -127,7 +127,7 @@ class _OTPInputFieldState extends State<OTPInputField> {
                     counterText: '',
                     filled: true,
                     fillColor: _focusNodes[index].hasFocus
-                        ? Colors.white
+                        ? AppColors.surface
                         : AppColors.inputFill,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),

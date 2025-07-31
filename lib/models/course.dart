@@ -26,7 +26,7 @@ class Course {
     required this.difficulty,
     required this.totalQuestions,
     required this.estimatedDurationMinutes,
-    required this.totalLessons,
+    required this.totalLessons
   });
 
   factory Course.fromJson(Map<String, dynamic> json) {
@@ -43,7 +43,7 @@ class Course {
       difficulty: json['difficulty'] ?? '',
       totalQuestions: json['totalQuestions'] ?? 0,
       estimatedDurationMinutes: json['estimatedDurationMinutes'] ?? 0,
-      totalLessons: json['totalLessons'] ?? 0,
+      totalLessons: json['totalLessons'] ?? 0
     );
   }
 }
