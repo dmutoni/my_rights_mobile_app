@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'dart:developer' as log;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -48,9 +50,7 @@ class FirebaseService {
       };
 
       await _firestore.collection('otps').add(otpDoc);
-      print('✅ OTP stored in Firestore for $email');
     } catch (e) {
-      print('❌ Error storing OTP: $e');
       throw Exception('Failed to store OTP: $e');
     }
   }
@@ -62,8 +62,6 @@ class FirebaseService {
     required String purpose,
   }) async {
     try {
-      print('🔍 Verifying OTP for $email, purpose: $purpose');
-
       final query = await _firestore
           .collection('otps')
           .where('email', isEqualTo: email)
@@ -75,7 +73,6 @@ class FirebaseService {
           .get();
 
       if (query.docs.isEmpty) {
-        print('❌ No matching OTP found');
         return false;
       }
 
@@ -84,16 +81,13 @@ class FirebaseService {
       final expiresAt = (data['expiresAt'] as Timestamp).toDate();
 
       if (DateTime.now().isAfter(expiresAt)) {
-        print('❌ OTP has expired');
         return false;
       }
 
       // Mark OTP as used
       await otpDoc.reference.update({'isUsed': true});
-      print('✅ OTP verified successfully');
       return true;
     } catch (e) {
-      print('❌ Error verifying OTP: $e');
       return false;
     }
   }
@@ -111,7 +105,7 @@ class FirebaseService {
         purpose: purpose,
       );
     } catch (e) {
-      print('❌ Error sending OTP email: $e');
+      rethrow;
     }
   }
 
@@ -121,8 +115,6 @@ class FirebaseService {
     required String password,
   }) async {
     try {
-      print('🔑 Creating user account...');
-
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -142,13 +134,13 @@ class FirebaseService {
         purpose: 'email_verification',
       );
 
-      print('✅ User account created and OTP sent');
+      log.log('✅ User account created and OTP sent');
       return credential;
     } on FirebaseAuthException catch (e) {
-      print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
+      log.log('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
       throw handleAuthException(e);
     } catch (e) {
-      print('❌ General exception: $e');
+      log.log('❌ General exception: $e');
       throw Exception('Signup failed: $e');
     }
   }
@@ -159,25 +151,25 @@ class FirebaseService {
     required String password,
   }) async {
     try {
-      print('🔑 Starting signInWithEmailAndPassword...');
-      print('📧 Email: "$email"');
-      print('🔒 Password provided: ${password.isNotEmpty}');
+      log.log('🔑 Starting signInWithEmailAndPassword...');
+      log.log('📧 Email: "$email"');
+      log.log('🔒 Password provided: ${password.isNotEmpty}');
 
       final credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      print('✅ signInWithEmailAndPassword successful');
-      print('👤 User: ${credential.user?.email}');
+      log.log('✅ signInWithEmailAndPassword successful');
+      log.log('👤 User: ${credential.user?.email}');
       return credential;
     } on FirebaseAuthException catch (e) {
-      print('❌ FirebaseAuthException Code: ${e.code}');
-      print('❌ FirebaseAuthException Message: ${e.message}');
+      log.log('❌ FirebaseAuthException Code: ${e.code}');
+      log.log('❌ FirebaseAuthException Message: ${e.message}');
       throw handleAuthException(e);
     } catch (e) {
-      print('❌ Unknown exception: $e');
-      print('❌ Exception type: ${e.runtimeType}');
+      log.log('❌ Unknown exception: $e');
+      log.log('❌ Exception type: ${e.runtimeType}');
       throw Exception('Sign in failed: $e');
     }
   }
@@ -207,7 +199,7 @@ class FirebaseService {
 
       return isValid;
     } catch (e) {
-      print('❌ Error verifying email with OTP: $e');
+      log.log('❌ Error verifying email with OTP: $e');
       throw Exception('Email verification failed: $e');
     }
   }
@@ -228,9 +220,9 @@ class FirebaseService {
         purpose: 'email_verification',
       );
 
-      print('✅ Email verification OTP resent');
+      log.log('✅ Email verification OTP resent');
     } catch (e) {
-      print('❌ Error resending OTP: $e');
+      log.log('❌ Error resending OTP: $e');
       throw Exception('Failed to resend OTP: $e');
     }
   }
@@ -257,9 +249,9 @@ class FirebaseService {
         purpose: 'password_reset',
       );
 
-      print('✅ Password reset OTP sent');
+      log.log('✅ Password reset OTP sent');
     } catch (e) {
-      print('❌ Error sending password reset OTP: $e');
+      log.log('❌ Error sending password reset OTP: $e');
       if (e.toString().contains('No account found')) {
         rethrow;
       }
@@ -279,7 +271,7 @@ class FirebaseService {
         purpose: 'password_reset',
       );
     } catch (e) {
-      print('❌ Error verifying password reset OTP: $e');
+      log.log('❌ Error verifying password reset OTP: $e');
       throw Exception('Password reset verification failed: $e');
     }
   }
@@ -306,16 +298,16 @@ class FirebaseService {
       // For now, we'll send a password reset email as fallback
       await _auth.sendPasswordResetEmail(email: email);
 
-      print('✅ Password reset email sent');
+      log.log('✅ Password reset email sent');
     } catch (e) {
-      print('❌ Error resetting password: $e');
+      log.log('❌ Error resetting password: $e');
       throw Exception('Password reset failed: $e');
     }
   }
 
   static Future<UserCredential> signInWithGoogle() async {
     try {
-      print('🔑 Starting Google Sign-In...');
+      log.log('🔑 Starting Google Sign-In...');
 
       // Initialize Google Sign-In
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
@@ -323,7 +315,7 @@ class FirebaseService {
       // Trigger the authentication flow
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
 
-      print('✅ Google account selected: ${googleUser.email}');
+      log.log('✅ Google account selected: ${googleUser.email}');
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
@@ -336,8 +328,6 @@ class FirebaseService {
 
       // Sign in to Firebase with the Google credential
       final userCredential = await _auth.signInWithCredential(credential);
-
-      print('✅ Firebase authentication successful');
 
       // Check if user document exists, create if not
       final userDoc = await getUserDocument(userCredential.user!.uid);
@@ -357,10 +347,8 @@ class FirebaseService {
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      print('❌ Firebase Auth Exception: ${e.code} - ${e.message}');
       throw handleAuthException(e);
     } catch (e) {
-      print('❌ Google Sign-In error: $e');
       throw Exception('Google Sign-In failed: $e');
     }
   }
@@ -411,7 +399,6 @@ class FirebaseService {
 
       await _firestore.collection('users').doc(uid).set(userModel.toJson());
     } catch (e) {
-      print('Failed to create user document: $e');
       throw Exception('Failed to create user document: $e');
     }
   }
@@ -498,7 +485,7 @@ class FirebaseService {
         return 'This operation is not allowed.';
       case 'network-request-failed':
         return 'Network error. Please check your internet connection.';
-      case 'requires-recent-login':
+      case 'requires-recent-log.login':
         return 'This operation requires recent authentication. Please sign in again.';
       default:
         return e.message ?? 'An unknown error occurred.';
