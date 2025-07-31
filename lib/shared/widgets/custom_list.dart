@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomListItem extends StatelessWidget {
+  final Widget? leading;
   final IconData icon;
   final String title;
   final String? subtitle;
@@ -9,6 +10,7 @@ class CustomListItem extends StatelessWidget {
 
   const CustomListItem({
     super.key,
+    this.leading,
     required this.icon,
     required this.title,
     this.subtitle,
@@ -25,6 +27,7 @@ class CustomListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
         child: Row(
           children: [
+            leading ?? 
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
