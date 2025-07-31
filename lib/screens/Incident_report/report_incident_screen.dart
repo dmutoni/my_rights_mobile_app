@@ -7,8 +7,6 @@ import '../../shared/widgets/custom_text_fields.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
 import '../../provider/report_type_provider.dart';
-import 'review_report_screen.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +30,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
   String _anonymity = 'Select';
   String? _selectedReportTypeId;
   ReportType? _selectedReportType;
-  
+
   final List<File> _photos = [];
   final List<File> _videos = [];
   final List<File> _audios = [];
@@ -341,7 +339,6 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 
@@ -367,4 +364,4 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
         return Icons.report_problem_outlined;
     }
   }
-} 
+}

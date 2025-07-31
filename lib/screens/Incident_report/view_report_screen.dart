@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/incident_report_provider.dart';
 import '../../models/incident_report_model.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import '../../provider/report_type_provider.dart';
@@ -124,7 +123,6 @@ class ViewReportScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 

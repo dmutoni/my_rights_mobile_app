@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../shared/widgets/custom_list.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import '../../shared/widgets/empty_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +36,6 @@ class ReportAbuseScreen extends ConsumerWidget {
       return const Scaffold(
         appBar: CustomAppBar(title: 'Report Abuse', showBackButton: true),
         body: Center(child: CircularProgressIndicator()),
-        bottomNavigationBar: CustomBottomNavBar(),
       );
     }
 
@@ -51,7 +49,6 @@ class ReportAbuseScreen extends ConsumerWidget {
             description: 'Please try again later or contact support.',
           ),
         ),
-        bottomNavigationBar: const CustomBottomNavBar(),
       );
     }
 
@@ -83,7 +80,6 @@ class ReportAbuseScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 

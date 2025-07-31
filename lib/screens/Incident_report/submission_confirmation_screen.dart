@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 import '../../shared/widgets/custom_app_bar.dart';
@@ -25,7 +24,6 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
                 'There is no submission available to confirm at this time.',
           ),
         ),
-        bottomNavigationBar: CustomBottomNavBar(),
       );
     }
     return Scaffold(
@@ -65,6 +63,7 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             CustomButton(
+              width: 150,
               text: 'Back to My Reports',
               onPressed: () {
                 ref.read(incidentReportProvider.notifier).clearCurrentReport();
@@ -74,7 +73,6 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

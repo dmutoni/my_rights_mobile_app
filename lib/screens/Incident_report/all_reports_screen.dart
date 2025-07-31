@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_list.dart';
 import '../../provider/incident_report_provider.dart';
 import '../../models/incident_report_model.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import '../../shared/widgets/empty_card.dart';
 import '../../core/theme/app_colors.dart';
@@ -98,7 +97,6 @@ class AllReportsScreen extends ConsumerWidget {
           context.go('${AppRouter.incidentReport}/report-abuse');
         },
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
