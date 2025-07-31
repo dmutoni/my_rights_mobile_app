@@ -48,15 +48,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   void _startAnimation() async {
     await _animationController.forward();
-    await Future.delayed(const Duration(seconds: 1));
 
     if (mounted) {
+      // Wait for auth state to be determined
       final authState = ref.read(authProvider);
 
-      if (authState.isAuthenticated && authState.user != null) {
-        context.go(AppRouter.home);
-      } else {
-        context.go(AppRouter.welcome);
+      // If still loading, wait a bit more
+      if (authState.isLoading) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+
+      if (mounted) {
+        final finalAuthState = ref.read(authProvider);
+
+        if (finalAuthState.isAuthenticated && finalAuthState.user != null) {
+          context.go(AppRouter.home);
+        } else {
+          context.go(AppRouter.welcome);
+        }
       }
     }
   }

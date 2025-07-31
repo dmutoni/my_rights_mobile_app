@@ -8,7 +8,6 @@ import 'package:my_rights_mobile_app/core/router/app_router.dart';
 import 'package:my_rights_mobile_app/provider/course_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/category_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/featured_card.dart';
 
@@ -117,7 +116,6 @@ class LearnScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
