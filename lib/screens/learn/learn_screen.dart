@@ -16,8 +16,7 @@ class LearnScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final coursesAsync = ref.watch(coursesProvider);
-    final categoryAsync = ref.watch(categoriesProvider);
+    final courses = ref.watch(coursesProvider);
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -48,50 +47,43 @@ class LearnScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 20),
                     // Featured Cards for Learning
-                    coursesAsync.when(
-                      data: (courses) {
-                        if (courses.isEmpty) {
-                          return EmptyCard(
-                            icon: MingCuteIcons.mgc_compass_3_line,
-                            title: 'Nothing to Explore',
-                            description:
-                                'Courses will appear here when available. Check back later for new content!',
-                          );
-                        }
-                        // pick 3 random courses
-                        final randomCourses = (courses.toList()
-                              ..shuffle(Random()))
-                            .take(3)
-                            .toList();
-
-                        return SizedBox(
-                            height: MediaQuery.of(context).size.width *
-                                0.85, // image + text
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: randomCourses.length,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(width: 20),
-                                itemBuilder: (context, index) {
-                                  final course = randomCourses[index];
-                                  return FeaturedCard(
-                                    title: course.title,
-                                    description: course.description,
-                                    imageUrl: course.imageUrl,
-                                    onTap: () {
-                                      // Navigate to course
-                                      context.go(
-                                          '${AppRouter.learn}/course/${course.id}');
-                                    },
-                                  );
-                                }));
-                      },
-                      error: (error, stack) =>
-                          Center(child: Text('Error loading courses')),
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
-                    ),
+                    if (courses.courses.isEmpty)
+                      EmptyCard(
+                        icon: MingCuteIcons.mgc_compass_3_line,
+                        title: 'Nothing to Explore',
+                        description:
+                            'Courses will appear here when available. Check back later for new content!',
+                      )
+                    else
+                      SizedBox(
+                          height: MediaQuery.of(context).size.width *
+                              0.85, // image + text
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: ((courses.courses.toList()
+                                        ..shuffle(Random()))
+                                      .take(3)
+                                      .toList())
+                                  .length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(width: 20),
+                              itemBuilder: (context, index) {
+                                final course = ((courses.courses.toList()
+                                      ..shuffle(Random()))
+                                    .take(3)
+                                    .toList())[index];
+                                return FeaturedCard(
+                                  title: course.title,
+                                  description: course.description,
+                                  imageUrl: course.imageUrl,
+                                  onTap: () {
+                                    // Navigate to course
+                                    context.go(
+                                        '${AppRouter.learn}/course/${course.id}');
+                                  },
+                                );
+                              })),
                     const SizedBox(height: 20),
                     // Course Category Section
                     Text(
@@ -107,40 +99,32 @@ class LearnScreen extends ConsumerWidget {
                           ),
                     ),
                     const SizedBox(height: 20),
-                    categoryAsync.when(
-                      data: (categories) {
-                        if (categories.isEmpty) {
-                          return EmptyCard(
-                            icon: MingCuteIcons.mgc_grid_line,
-                            title: 'No Categories',
-                            description:
-                                'Categories will appear here when available. Check back later for new content!',
+                    if (courses.categories.isEmpty)
+                      EmptyCard(
+                        icon: MingCuteIcons.mgc_grid_line,
+                        title: 'No Categories',
+                        description:
+                            'Categories will appear here when available. Check back later for new content!',
+                      )
+                    else
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 2.25,
+                        children: courses.categories.map((category) {
+                          return CategoryCard(
+                            title: category.name,
+                            onTap: () {
+                              // Navigate to category courses
+                              context.go(
+                                  '${AppRouter.learn}/category/${category.id}');
+                            },
                           );
-                        }
-                        return GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 2.25,
-                          children: categories.map((category) {
-                            return CategoryCard(
-                              title: category.name,
-                              onTap: () {
-                                // Navigate to category courses
-                                context.go(
-                                    '${AppRouter.learn}/category/${category.id}');
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                      error: (error, stack) =>
-                          Center(child: Text('Error loading categories')),
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
-                    ),
+                        }).toList(),
+                      ),
                     const SizedBox(height: 20),
                   ],
                 ),
