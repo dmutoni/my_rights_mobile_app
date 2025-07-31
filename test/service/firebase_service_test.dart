@@ -4,7 +4,6 @@ import 'package:mockito/annotations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_rights_mobile_app/service/firebase_service.dart';
-import 'package:my_rights_mobile_app/models/user_model.dart';
 import 'firebase_service_test.mocks.dart';
 
 // Generate mocks using build_runner
@@ -22,18 +21,6 @@ import 'firebase_service_test.mocks.dart';
 ])
 void main() {
   group('FirebaseService Tests', () {
-    late MockFirebaseAuth mockFirebaseAuth;
-    late MockFirebaseFirestore mockFirestore;
-    late MockUser mockUser;
-    late MockUserCredential mockUserCredential;
-
-    setUp(() {
-      mockFirebaseAuth = MockFirebaseAuth();
-      mockFirestore = MockFirebaseFirestore();
-      mockUser = MockUser();
-      mockUserCredential = MockUserCredential();
-    });
-
     group('OTP Verification', () {
       test('verifyOTP should return false for expired OTP', () async {
         // Arrange
@@ -58,7 +45,6 @@ void main() {
         final mockQuery = MockQuery<Map<String, dynamic>>();
         final mockCollection = MockCollectionReference<Map<String, dynamic>>();
 
-        when(mockFirestore.collection('otps')).thenReturn(mockCollection);
         when(mockCollection.where('email', isEqualTo: email))
             .thenReturn(mockQuery);
         when(mockQuery.where('otp', isEqualTo: otp)).thenReturn(mockQuery);
