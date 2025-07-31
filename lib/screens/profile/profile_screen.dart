@@ -7,7 +7,6 @@ import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 import 'package:my_rights_mobile_app/provider/main_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -46,7 +45,6 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 

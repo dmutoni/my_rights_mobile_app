@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 
 class ProfileDetailsScreen extends ConsumerStatefulWidget {
   const ProfileDetailsScreen({super.key});
@@ -261,7 +260,6 @@ class _ProfileScreenState extends ConsumerState<ProfileDetailsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 

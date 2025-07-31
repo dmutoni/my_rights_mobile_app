@@ -6,11 +6,12 @@ import 'package:file_picker/file_picker.dart';
 import '../../shared/widgets/custom_text_fields.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../provider/incident_report_provider.dart';
-import '../../shared/widgets/custom_bottom_navbar.dart';
+import '../../provider/report_type_provider.dart';
 import '../../provider/main_provider.dart';
 import '../../shared/widgets/custom_app_bar.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
+import '../../models/report_type.dart';
 
 class ReportIncidentScreen extends ConsumerStatefulWidget {
   const ReportIncidentScreen({super.key});
@@ -27,10 +28,26 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
   final _locationController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _anonymity = 'Select';
+  String? _selectedReportTypeId;
+  ReportType? _selectedReportType;
 
   final List<File> _photos = [];
   final List<File> _videos = [];
   final List<File> _audios = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Get report type from URL parameters
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uri = GoRouterState.of(context).uri;
+      final reportTypeId = uri.queryParameters['type'];
+      if (reportTypeId != null) {
+        _selectedReportTypeId = reportTypeId;
+        _selectedReportType = ref.read(reportTypeByIdProvider(reportTypeId));
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -95,6 +112,12 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
       );
       return;
     }
+    if (_selectedReportTypeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a report type')),
+      );
+      return;
+    }
 
     final notifier = ref.read(incidentReportProvider.notifier);
 
@@ -105,6 +128,7 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
         date: DateTime.parse(_dateController.text),
         location: _locationController.text,
         description: _descriptionController.text,
+        reportTypeId: _selectedReportTypeId!,
         isAnonymous: _anonymity == 'Anonymous',
       );
 
@@ -112,14 +136,25 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
       if (report == null) throw Exception('Failed to create report');
 
       // Upload evidence files
-      for (var photo in _photos) {
-        await notifier.uploadEvidence('photo', photo);
-      }
-      for (var video in _videos) {
-        await notifier.uploadEvidence('video', video);
-      }
-      for (var audio in _audios) {
-        await notifier.uploadEvidence('audio', audio);
+      try {
+        for (var photo in _photos) {
+          if (await photo.exists()) {
+            await notifier.uploadEvidence('photo', photo);
+          }
+        }
+        for (var video in _videos) {
+          if (await video.exists()) {
+            await notifier.uploadEvidence('video', video);
+          }
+        }
+        for (var audio in _audios) {
+          if (await audio.exists()) {
+            await notifier.uploadEvidence('audio', audio);
+          }
+        }
+      } catch (e) {
+        print('Error uploading evidence: $e');
+        // Continue with report submission even if evidence upload fails
       }
 
       if (mounted) {
@@ -155,13 +190,55 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
     }
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Report an incident'),
+      appBar:
+          const CustomAppBar(title: 'Report Incident', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
+              // Display selected report type
+              if (_selectedReportType != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _getIconFromString(_selectedReportType!.icon),
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _selectedReportType!.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              _selectedReportType!.description,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 16),
               CustomTextField(
                 label: 'Title',
                 hint: 'Enter a short title for the incident',
@@ -262,7 +339,29 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
+  }
+
+  IconData _getIconFromString(String iconName) {
+    switch (iconName) {
+      case 'attach_money':
+        return Icons.attach_money;
+      case 'shield_outlined':
+        return Icons.shield_outlined;
+      case 'people_outline':
+        return Icons.people_outline;
+      case 'gavel_outlined':
+        return Icons.gavel_outlined;
+      case 'security':
+        return Icons.security;
+      case 'eco':
+        return Icons.eco;
+      case 'work':
+        return Icons.work;
+      case 'help_outline':
+        return Icons.help_outline;
+      default:
+        return Icons.report_problem_outlined;
+    }
   }
 }
