@@ -34,7 +34,6 @@ class AllReportsScreen extends ConsumerWidget {
           'Report $i: ${reports[i].title} (ID: ${reports[i].id}, UserID: ${reports[i].userId})');
     }
 
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const CustomAppBar(
@@ -45,16 +44,17 @@ class AllReportsScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
         child: reports.isEmpty
             ? Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.2),
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.2),
                 child: EmptyCard(
                   icon: Icons.description_outlined,
                   title: 'No reports found',
                   description: 'You have not submitted any reports yet.',
-                )
-            ) : Column(
-                children: [
-                  Expanded(
-                    child: CustomList(
+                ))
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CustomList(
                       items: reports
                           .map((report) => CustomListItem(
                                 icon: Icons.description_outlined,
@@ -79,16 +79,18 @@ class AllReportsScreen extends ConsumerWidget {
                               ))
                           .toList(),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.primary,
         icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
         label: Text('New Report',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onPrimary)),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onPrimary)),
         onPressed: () {
           context.go('${AppRouter.incidentReport}/report-abuse');
         },

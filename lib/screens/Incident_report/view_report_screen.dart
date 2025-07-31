@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
-import '../../shared/widgets/custom_list.dart';
 import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +15,7 @@ class ViewReportScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reportType = ref.watch(reportTypeByIdProvider(report.reportTypeId));
-    
+
     return Scaffold(
       appBar: CustomAppBar(title: report.title, showBackButton: true),
       body: Padding(
@@ -42,7 +41,8 @@ class ViewReportScreen extends ConsumerWidget {
                                 : AppColors.error,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(report.status.name, style: const TextStyle(color: AppColors.surface)),
+                  child: Text(report.status.name,
+                      style: const TextStyle(color: AppColors.surface)),
                 ),
               ],
             ),
