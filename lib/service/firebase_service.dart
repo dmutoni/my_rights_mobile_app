@@ -617,4 +617,14 @@ class FirebaseService {
           .snapshots();
     }
   }
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getDocumentQueryRange({
+    required String collection,
+    required String field,
+    required dynamic value,
+  }) {
+    return _firestore.collection(collection).where(field, isGreaterThanOrEqualTo: value).where(field, isLessThanOrEqualTo: value + '\uf8ff').snapshots();
+  }
+
+  static getDocumentStream(String s, String lawyerId) {}
 }
+
