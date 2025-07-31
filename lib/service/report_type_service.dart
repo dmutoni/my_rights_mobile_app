@@ -9,7 +9,6 @@ class ReportTypeService {
   static Stream<List<ReportType>> getActiveReportTypes() {
     return _firestore
         .collection(_collection)
-        .where('isActive', isEqualTo: true)
         .orderBy('name')
         .snapshots()
         .map((snapshot) => snapshot.docs
