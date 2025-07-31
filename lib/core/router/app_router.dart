@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 import 'package:my_rights_mobile_app/screens/Incident_report/report_incident_screen.dart';
+import 'package:my_rights_mobile_app/screens/aid/lawyer_profile_screen.dart';
+import 'package:my_rights_mobile_app/screens/aid/lawyers_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/confirm_account_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/forgot_password_screen.dart';
 import 'package:my_rights_mobile_app/screens/home_screen.dart';
@@ -218,6 +220,28 @@ class AppRouter {
         path: aid,
         name: 'aid',
         builder: (context, state) => const OrganizationScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'lawyers',
+            builder: (context, state) {
+              final organization = state.pathParameters['id'];
+              return LawyersScreen(organization: organization);
+            },
+            routes: [
+              GoRoute(
+                path: ':lawyerId',
+                name: 'lawyer',
+                builder: (context, state) {
+                  final id = state.pathParameters['lawyerId'] ?? '';
+                  return LawyerProfileScreen(
+                    lawyerId: id,
+                  );
+                },
+              )
+            ]
+          ),
+        ],
       ),
       ],
       errorBuilder: (context, state) => Scaffold(

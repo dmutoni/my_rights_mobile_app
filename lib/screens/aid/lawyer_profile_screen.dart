@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/models/lawyer.dart';
 import 'package:my_rights_mobile_app/provider/lawyer_provider.dart';
+import 'package:my_rights_mobile_app/provider/organization_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,51 +16,60 @@ class LawyerProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lawyerAsync = ref.watch(lawyerByIdProvider(lawyerId));
+    final lawyer = ref.watch(lawyerByIdProvider(lawyerId));
+    final isLoading = ref.watch(lawyersProvider).loading;
+    final error = ref.watch(lawyersProvider).error;
+    final organizations = ref.watch(organizationsProvider).organizations;
+    final correspondingOrganizations = lawyer != null
+        ? organizations.where((org) => lawyer.organizations.contains(org.id)).toList()
+        : [];
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: lawyerAsync.when(
-        data: (lawyer) {
-          if (lawyer == null) {
-            return const Center(
-              child: Text(
-                'Lawyer not found',
+      body: Builder(builder: (context) {
+        if (isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (error != null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Error: $error',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.red,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        }
+        if (lawyer == null) {
+          return const Center(
+            child: Text(
+              'Lawyer not found',
                 style: TextStyle(fontSize: 18),
               ),
             );
           }
-          return _buildLawyerDetail(context, lawyer);
+          return _buildLawyerDetail(context, lawyer, correspondingOrganizations);
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Colors.red,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Error: $error',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
 
-  Widget _buildLawyerDetail(BuildContext context, Lawyer lawyer) {
+  Widget _buildLawyerDetail(BuildContext context, Lawyer lawyer, List<dynamic> correspondingOrganizations) {
     return CustomScrollView(
       slivers: [
         // Custom App Bar with back button
@@ -148,7 +158,9 @@ class LawyerProfileScreen extends ConsumerWidget {
                 const SizedBox(height: 4),
                 
                 Text(
-                  lawyer.organization,
+                  correspondingOrganizations.isNotEmpty
+                            ? correspondingOrganizations.map((org) => org.name).join(', ')
+                            : 'No organizations',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey.shade500,

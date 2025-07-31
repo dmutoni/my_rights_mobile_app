@@ -44,13 +44,13 @@ class LearnScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 20),
                       // Featured Cards for Learning
-                      if (courses.courses.isEmpty)
+                      if (courses.courses.isEmpty) ...[
                         EmptyCard(
                           icon: MingCuteIcons.mgc_compass_3_line,
                           title: 'Nothing to Explore',
                           description: 'Courses will appear here when available. Check back later for new content!',
                         )
-                      else
+                      ] else ...[
                         SizedBox(
                           height: MediaQuery.of(context).size.width * 0.85, // image + text
                           child: ListView.separated(
@@ -72,6 +72,7 @@ class LearnScreen extends ConsumerWidget {
                             }
                           )
                         ),
+                      ],
                       const SizedBox(height: 20),
                       // Course Category Section
                       Text(
@@ -83,13 +84,13 @@ class LearnScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      if (courses.categories.isEmpty)
+                      if (courses.categories.isEmpty) ...[
                         EmptyCard(
                           icon: MingCuteIcons.mgc_grid_line,
                           title: 'No Categories',
                           description: 'Categories will appear here when available. Check back later for new content!',
                         )
-                      else 
+                      ] else ...[
                         GridView.count(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -107,6 +108,7 @@ class LearnScreen extends ConsumerWidget {
                             );
                           }).toList(),
                         ),
+                      ],
                       const SizedBox(height: 20),
                     ],
                   ),

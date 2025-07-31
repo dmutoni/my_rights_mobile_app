@@ -28,6 +28,7 @@ class OrganizationScreen extends ConsumerWidget {
         child: Column(
           children: [
             CustomSearchBar(
+              hintText: 'Search for organization',
               query: searchQuery,
               onChanged: (value) {
                 ref.read(organizationsProvider.notifier).setSearchQuery(value);
