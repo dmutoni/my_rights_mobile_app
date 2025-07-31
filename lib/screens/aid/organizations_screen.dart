@@ -16,7 +16,10 @@ class OrganizationScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final organizationsAsync = ref.watch(organizationsProvider);
+    final organizations = ref.watch(organizationsProvider).filteredOrganizations;
+    final loading = ref.watch(organizationsProvider).loading;
+    final error = ref.watch(organizationsProvider).error;
+    final searchQuery = ref.watch(organizationsProvider).searchQuery;
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -24,62 +27,61 @@ class OrganizationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            CustomSearchBar(onChanged: (value) {
-              ref.read(searchOrganizationProvider.notifier).state = value;
-            }),
-            Expanded(
-              child: organizationsAsync.when(
-                data: (organizations) {
-                  if (organizations.isEmpty) {
-                    return EmptyCard(
-                        icon: MingCuteIcons.mgc_building_1_line,
-                        title: 'No Legal Organizations Available',
-                        description: 'Legal organizations will appear here when available. Check back later for new content!',
-                    );
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.only(left: 20, bottom: 24),
-                    itemCount: organizations.length,
-                    itemBuilder: (context, index) {
-                      final organization = organizations[index];
-                      return CustomListItem(
-                        icon: MingCuteIcons.mgc_building_1_line,
-                        title: organization.name,
-                        subtitle: organization.location,
-                        onTap: () {
-                          context.go('${AppRouter.aid}/${organization.id}');
-                        }
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                error: (error, stack) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 48,
+            CustomSearchBar(
+              query: searchQuery,
+              onChanged: (value) {
+                ref.read(organizationsProvider.notifier).setSearchQuery(value);
+              }),
+            if (loading) ...[
+              const Center(child: CircularProgressIndicator()),
+            ],
+            if (error != null) ...[
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error: $error',
+                      style: const TextStyle(
+                        fontSize: 16,
                         color: Colors.red,
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error: $error',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.red,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-              ),
-            ),
+              )
+            ],
+            if (organizations.isEmpty) ...[
+              EmptyCard(
+                  icon: MingCuteIcons.mgc_building_1_line,
+                  title: 'No Legal Organizations Available',
+                  description: 'Legal organizations will appear here when available. Check back later for new content!',
+              )
+            ] else ...[
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(left: 20, bottom: 24),
+                  itemCount: organizations.length,
+                  itemBuilder: (context, index) {
+                    final organization = organizations[index];
+                  return CustomListItem(
+                    icon: MingCuteIcons.mgc_building_1_line,
+                    title: organization.name,
+                    subtitle: organization.location,
+                    onTap: () {
+                      context.go('${AppRouter.aid}/${organization.id}');
+                    }
+                  );
+                },
+              ))
+            ]
           ],
         ),
       ),
