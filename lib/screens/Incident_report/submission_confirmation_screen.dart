@@ -64,7 +64,7 @@ class SubmissionConfirmationScreen extends ConsumerWidget {
             const SizedBox(height: 32),
             CustomButton(
               width: 150,
-              text: 'Back to My Reports',
+              text: 'Back',
               onPressed: () {
                 ref.read(incidentReportProvider.notifier).clearCurrentReport();
                 context.go(AppRouter.incidentReport);

@@ -12,7 +12,12 @@
           "package_name": "com.example.my_rights_mobile_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "387405403057-k7pi3qgvm6fb6q2ee447ktsm9nv6dpu7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDT9kP-4fjDC6webIXmR-imL8gjZjJJ2UY"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "387405403057-k7pi3qgvm6fb6q2ee447ktsm9nv6dpu7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "387405403057-gi9j1e8a5kvt79egiu90erpdhkspr261.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.myRightsMobileApp"
+              }
+            }
+          ]
         }
       }
     }

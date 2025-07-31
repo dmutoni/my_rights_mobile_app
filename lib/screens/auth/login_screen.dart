@@ -75,6 +75,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
@@ -92,99 +93,101 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                const Text(
-                  'Welcome back',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                CustomTextField(
-                  label: 'Email',
-                  hint: 'Enter your email',
-                  controller: _emailController,
-                  type: TextFieldType.email,
-                  validator: Validators.email,
-                ),
-                const SizedBox(height: 20),
-                CustomTextField(
-                  label: 'Password',
-                  hint: 'Enter your password',
-                  controller: _passwordController,
-                  type: TextFieldType.password,
-                  validator: Validators.password,
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => context.go(AppRouter.forgotPassword),
-                    child: const Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Welcome back',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                ),
-                const SizedBox(height: 40),
-                CustomButton(
-                  text: 'Login',
-                  width: double.infinity,
-                  isLoading: authState.isLoading,
-                  onPressed: _handleLogin,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: AppColors.primary)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('OR',
-                          style: TextStyle(color: AppColors.textSecondary)),
-                    ),
-                    Expanded(child: Divider(color: AppColors.primary)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                _buildGoogleSignInButton(),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => context.go(AppRouter.signup),
+                  const SizedBox(height: 40),
+                  CustomTextField(
+                    label: 'Email',
+                    hint: 'Enter your email',
+                    controller: _emailController,
+                    type: TextFieldType.email,
+                    validator: Validators.email,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    label: 'Password',
+                    hint: 'Enter your password',
+                    controller: _passwordController,
+                    type: TextFieldType.password,
+                    validator: Validators.password,
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () => context.go(AppRouter.forgotPassword),
                       child: const Text(
-                        'Sign up',
+                        'Forgot password?',
                         style: TextStyle(
                           color: AppColors.primary,
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 40),
+                  CustomButton(
+                    text: 'Login',
+                    width: double.infinity,
+                    isLoading: authState.isLoading,
+                    onPressed: _handleLogin,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: AppColors.primary)),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('OR',
+                            style: TextStyle(color: AppColors.textSecondary)),
+                      ),
+                      Expanded(child: Divider(color: AppColors.primary)),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  _buildGoogleSignInButton(),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.go(AppRouter.signup),
+                        child: const Text(
+                          'Sign up',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
