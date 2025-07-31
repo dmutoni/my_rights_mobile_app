@@ -75,6 +75,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         } else {
           print('🆕 Creating new user document...');
+          print('Auth: Creating new user document for UID: ${firebaseUser.uid}');
           await FirebaseService.createUserDocument(
             uid: firebaseUser.uid,
             name: firebaseUser.displayName ?? '',
@@ -104,6 +105,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } else {
       print('🚪 User signed out - clearing all data');
+      print('Auth: No Firebase user found');
       state = const AuthState();
     }
 

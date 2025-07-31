@@ -7,7 +7,6 @@ import 'package:my_rights_mobile_app/provider/course_provider.dart';
 import 'package:my_rights_mobile_app/provider/main_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/course_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/info_card.dart';
 import 'package:my_rights_mobile_app/shared/widgets/quick_access_card.dart';
@@ -172,7 +171,6 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
