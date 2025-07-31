@@ -38,28 +38,38 @@ class HomeScreen extends ConsumerWidget {
                     // Quick Access Section
                     Text(
                       'Quick Access',
-                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).appBarTheme.foregroundColor
-                      ),
+                      style: Theme.of(context)
+                          .appBarTheme
+                          .titleTextStyle
+                          ?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor),
                     ),
                     const SizedBox(height: 20),
                     QuickAccessCard(
                       icon: MingCuteIcons.mgc_book_6_line,
                       title: 'Civic Education',
-                      description: 'Learn about your rights and responsibilities as a citizen.',
+                      description:
+                          'Learn about your rights and responsibilities as a citizen.',
                       onTap: () => {
-                        ref.read(selectedBottomNavIndexProvider.notifier).state = 1,
+                        ref
+                            .read(selectedBottomNavIndexProvider.notifier)
+                            .state = 1,
                         context.go(AppRouter.learn)
                       },
                     ),
                     QuickAccessCard(
                       icon: MingCuteIcons.mgc_announcement_line,
                       title: 'Report an Issue',
-                      description: 'Report incidents of injustice or corruption.',
+                      description:
+                          'Report incidents of injustice or corruption.',
                       onTap: () => {
-                        ref.read(selectedBottomNavIndexProvider.notifier).state = 2,
+                        ref
+                            .read(selectedBottomNavIndexProvider.notifier)
+                            .state = 2,
                         context.go(AppRouter.incidentReport)
                       },
                     ),
@@ -68,7 +78,9 @@ class HomeScreen extends ConsumerWidget {
                       title: 'Legal Aid',
                       description: 'Find legal assistance and resources.',
                       onTap: () => {
-                        ref.read(selectedBottomNavIndexProvider.notifier).state = 3,
+                        ref
+                            .read(selectedBottomNavIndexProvider.notifier)
+                            .state = 3,
                         context.go(AppRouter.aid)
                       },
                     ),
@@ -76,11 +88,15 @@ class HomeScreen extends ConsumerWidget {
                     // Featured Courses Section
                     Text(
                       'Featured Courses',
-                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).appBarTheme.foregroundColor
-                      ),
+                      style: Theme.of(context)
+                          .appBarTheme
+                          .titleTextStyle
+                          ?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor),
                     ),
                     const SizedBox(height: 20),
                     if (loading)
@@ -117,11 +133,15 @@ class HomeScreen extends ConsumerWidget {
                     // Helpful Tips Section
                     Text(
                       'Helpful Tips',
-                      style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).appBarTheme.foregroundColor
-                      ),
+                      style: Theme.of(context)
+                          .appBarTheme
+                          .titleTextStyle
+                          ?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .foregroundColor),
                     ),
                     const SizedBox(height: 20),
                     if (loading)
