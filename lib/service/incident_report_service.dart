@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:my_rights_mobile_app/service/cloudinary_service.dart';
 import '../models/incident_report_model.dart';
+import 'package:path/path.dart' as path;
 
 class IncidentReportService {
   static final _firestore = FirebaseFirestore.instance;
@@ -12,10 +15,10 @@ class IncidentReportService {
   static Future<IncidentReport> createReport(IncidentReport report) async {
     print('Creating incident report in Firestore...');
     print('Report data: ${report.toFirestore()}');
-    
+
     final docRef =
         await _firestore.collection(_collection).add(report.toFirestore());
-    
+
     print('Report created with document ID: ${docRef.id}');
     return report.copyWith(id: docRef.id);
   }
@@ -68,14 +71,15 @@ class IncidentReportService {
           .get()
           .then((queryResult) {
         print('Direct query result: ${queryResult.docs.length} documents');
+
         for (var doc in queryResult.docs) {
           print('Query result doc: ${doc.id} - ${doc.data()}');
         }
-      }).catchError((error) {
+      }).catchError((error, stackTrace) {
         print('Query error: $error');
       });
     });
-    
+
     return _firestore
         .collection(_collection)
         .where('userId', isEqualTo: userId)
@@ -83,6 +87,7 @@ class IncidentReportService {
         .snapshots()
         .map((snapshot) {
       print('Found ${snapshot.docs.length} reports for user: $userId');
+
       for (var doc in snapshot.docs) {
         print('Document ID: ${doc.id}, Data: ${doc.data()}');
       }
@@ -101,26 +106,56 @@ class IncidentReportService {
     });
   }
 
-  // Upload evidence files
   static Future<String> uploadFile(
       String reportId, String type, File file) async {
     try {
-      print('Uploading file: ${file.path} for report: $reportId, type: $type');
+      // 1. CHECK AUTHENTICATION FIRST
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User must be authenticated to upload files');
+      }
 
+      // 2. CHECK FILE EXISTS
       if (!await file.exists()) {
         throw Exception('File does not exist: ${file.path}');
       }
-      
-      final ref = _storage.ref().child(
-          'reports/$reportId/$type/${DateTime.now().millisecondsSinceEpoch}');
-      final uploadTask = await ref.putFile(file);
-      final downloadUrl = await uploadTask.ref.getDownloadURL();
 
+      // 3. CHECK FILE SIZE
+      final fileSize = await file.length();
+      print('File size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)} MB');
+
+      // Optional: Limit file size (10MB for example)
+      if (fileSize > 10 * 1024 * 1024) {
+        throw Exception('File too large. Maximum size is 10MB');
+      }
+
+      // 4. UPLOAD TO CLOUDINARY
+      print('Uploading to Cloudinary...');
+      final downloadUrl = await CloudinaryService.uploadFile(file);
       print('File uploaded successfully: $downloadUrl');
       return downloadUrl;
-    } catch (e) {
-      print('Error uploading file: $e');
-      throw Exception('Failed to upload file: $e');
+    } catch (e, stackTrace) {
+      print('Error uploading file: $e at $stackTrace');
+      print('Error details: ${e.toString()}');
+      rethrow;
+    }
+  }
+
+// Helper function to determine content type
+  static String _getContentType(File file) {
+    final extension = path.extension(file.path).toLowerCase();
+    switch (extension) {
+      case '.jpg':
+      case '.jpeg':
+        return 'image/jpeg';
+      case '.png':
+        return 'image/png';
+      case '.pdf':
+        return 'application/pdf';
+      case '.mp4':
+        return 'video/mp4';
+      default:
+        return 'application/octet-stream';
     }
   }
 

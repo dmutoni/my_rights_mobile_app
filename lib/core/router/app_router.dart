@@ -21,7 +21,6 @@ import 'package:my_rights_mobile_app/screens/splash_screen.dart';
 import 'package:my_rights_mobile_app/screens/auth/welcome_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
-import 'package:my_rights_mobile_app/screens/incident_report/report_incident_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/review_report_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/submission_confirmation_screen.dart';
@@ -184,13 +183,8 @@ class AppRouter {
             name: 'reportIncident',
             builder: (context, state) => const ReportIncidentScreen(),
           ),
-          GoRoute(
-              path: 'report-incident',
-              name: 'reportIncident',
-              builder: (context, state) => const ReportIncidentScreen(),
-            ),
             GoRoute(
-              path: 'review-report',
+              path: 'view-report',
               name: 'viewReport',
               builder: (context, state) {
                 final report = state.extra as IncidentReport?;

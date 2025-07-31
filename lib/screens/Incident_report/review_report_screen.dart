@@ -47,9 +47,9 @@ class ReviewReportScreen extends ConsumerWidget {
               children: [
                 Text(
                     'Incident Type: ${report.description.length > 20 ? '${report.description.substring(0, 20)}...' : report.description}'),
-                Text('Location: ${report.location}'),
               ],
             ),
+            Text('Location: ${report.location}'),
             const SizedBox(height: 8),
             Text('Date: ${report.date.toLocal().toString().split(' ')[0]}'),
             const SizedBox(height: 16),

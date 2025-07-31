@@ -53,7 +53,7 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
         state = state.copyWith(userReports: []);
       }
     });
-    
+
     // Also initialize immediately if user is already authenticated
     final currentAuth = ref.read(authProvider);
     if (currentAuth.isAuthenticated && currentAuth.user != null) {
@@ -98,10 +98,10 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
     try {
       final user = ref.read(authProvider).user;
       if (user == null) throw Exception('User not authenticated');
-      
+
       print('Creating report for user: ${user.id}');
       print('Report details: title=$title, reportTypeId=$reportTypeId');
-      
+
       final report = IncidentReport.create(
         userId: user.id,
         title: title,
@@ -111,11 +111,11 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
         reportTypeId: reportTypeId,
         isAnonymous: isAnonymous,
       );
-      
+
       print('Report created with tracking number: ${report.trackingNumber}');
       final createdReport = await IncidentReportService.createReport(report);
       print('Report saved to Firestore with ID: ${createdReport.id}');
-      
+
       state = state.copyWith(
         isLoading: false,
         currentReport: createdReport,
@@ -157,11 +157,13 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
         isLoading: false,
         currentReport: updatedReport,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
+
+      print('Error uploading evidence: $e $stackTrace');
     }
   }
 
