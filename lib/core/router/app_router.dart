@@ -23,6 +23,9 @@ import 'package:my_rights_mobile_app/screens/incident_report/all_reports_screen.
 import 'package:my_rights_mobile_app/screens/incident_report/report_abuse_screen.dart';
 import 'package:my_rights_mobile_app/screens/incident_report/view_report_screen.dart';
 import 'package:my_rights_mobile_app/models/incident_report_model.dart';
+import 'package:my_rights_mobile_app/screens/profile/profile_screen.dart';
+import 'package:my_rights_mobile_app/screens/profile/edit_profile_screen.dart';
+import 'package:my_rights_mobile_app/screens/profile/help_screen.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_button.dart';
 
 class AppRouter {
@@ -36,6 +39,7 @@ class AppRouter {
   static const String learn = '/learn';
   static const String aid = '/aid';
   static const String profile = '/profile';
+  static const String help = '/help';
   static const String incidentReport = '/incident-report';
 
   static GoRouter createRouter(WidgetRef ref) {
@@ -195,8 +199,20 @@ class AppRouter {
         GoRoute(
           path: profile,
           name: 'profile',
-          builder: (context, state) => const ProfileDetailsScreen(),
-        )
+          builder: (context, state) => const ProfileScreen(),
+          routes: [
+            GoRoute(
+              path: '/edit-profile',
+              name: 'editProfile',
+              builder: (context, state) => const EditProfileScreen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: help,
+          name: 'help',
+          builder: (context, state) => const HelpScreen(),
+        ),
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(
