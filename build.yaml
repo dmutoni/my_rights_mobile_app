@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      mockito:
+        options:
+          # Generate mocks for all annotated classes
+          null_safety: true
