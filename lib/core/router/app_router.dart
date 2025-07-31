@@ -179,34 +179,28 @@ class AppRouter {
               builder: (context, state) => const ReportAbuseScreen(),
             ),
             GoRoute(
-            path: 'report-incident',
-            name: 'reportIncident',
-            builder: (context, state) => const ReportIncidentScreen(),
-          ),
+              path: 'report-incident',
+              name: 'reportIncident',
+              builder: (context, state) => const ReportIncidentScreen(),
+            ),
             GoRoute(
               path: 'view-report',
               name: 'viewReport',
               builder: (context, state) {
-                final report = state.extra as IncidentReport?;
-                if (report == null) {
-                  return Scaffold(
-                    body: Center(child: Text('No report provided.')),
-                  );
-                }
-                return ViewReportScreen(report: report);
+                return ViewReportScreen();
               },
             ),
             GoRoute(
-            path: 'review-report',
-            name: 'reviewReport',
-            builder: (context, state) => const ReviewReportScreen(),
-          ),
-          GoRoute(
-            path: 'submission-confirmation',
-            name: 'submissionConfirmation',
-            builder: (context, state) => const SubmissionConfirmationScreen(),
-          ),
-        ],
+              path: 'review-report',
+              name: 'reviewReport',
+              builder: (context, state) => const ReviewReportScreen(),
+            ),
+            GoRoute(
+              path: 'submission-confirmation',
+              name: 'submissionConfirmation',
+              builder: (context, state) => const SubmissionConfirmationScreen(),
+            ),
+          ],
         ),
         GoRoute(
           path: profile,

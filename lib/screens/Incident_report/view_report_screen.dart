@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
+import 'package:my_rights_mobile_app/provider/incident_report_provider.dart';
 import '../../models/incident_report_model.dart';
 import '../../shared/widgets/custom_bottom_navbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,15 +10,17 @@ import '../../shared/widgets/audio_panel.dart';
 import '../../shared/widgets/video_panel.dart';
 
 class ViewReportScreen extends ConsumerWidget {
-  final IncidentReport report;
-  const ViewReportScreen({super.key, required this.report});
+  const ViewReportScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reportType = ref.watch(reportTypeByIdProvider(report.reportTypeId));
+    final report = ref.read(incidentReportProvider.notifier).selectedReport;
+
+    final reportType =
+        ref.watch(reportTypeByIdProvider(report?.reportTypeId ?? ''));
 
     return Scaffold(
-      appBar: CustomAppBar(title: report.title, showBackButton: true),
+      appBar: CustomAppBar(title: report?.title ?? '', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: ListView(
@@ -32,16 +35,16 @@ class ViewReportScreen extends ConsumerWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: report.status == IncidentStatus.submitted
+                    color: report?.status == IncidentStatus.submitted
                         ? AppColors.success
-                        : report.status == IncidentStatus.underReview
+                        : report?.status == IncidentStatus.underReview
                             ? AppColors.warning
-                            : report.status == IncidentStatus.resolved
+                            : report?.status == IncidentStatus.resolved
                                 ? AppColors.info
                                 : AppColors.error,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Text(report.status.name,
+                  child: Text(report?.status.name ?? '',
                       style: const TextStyle(color: AppColors.surface)),
                 ),
               ],
@@ -78,45 +81,45 @@ class ViewReportScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Incident Type: ${report.title}'),
-                Text('Location: ${report.location}'),
+                Text('Incident Type: ${report?.title}'),
+                Text('Location: ${report?.location}'),
               ],
             ),
             const SizedBox(height: 8),
-            Text('Date: ${report.date.toLocal().toString().split(' ')[0]}'),
+            Text('Date: ${report?.date.toLocal().toString().split(' ')[0]}'),
             const SizedBox(height: 16),
             const Text('Details',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text(report.description),
+            Text(report?.description ?? ''),
             const SizedBox(height: 16),
             const Text('Evidence',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            if (report.photoUrls.isNotEmpty)
-              ...report.photoUrls.map((url) => Padding(
+            if (report?.photoUrls.isNotEmpty ?? false)
+              ...report!.photoUrls.map((url) => Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(url, height: 160, fit: BoxFit.cover),
                     ),
                   )),
-            if (report.videoUrls.isNotEmpty)
-              ...report.videoUrls.map((url) => Padding(
+            if (report?.videoUrls.isNotEmpty ?? false)
+              ...report!.videoUrls.map((url) => Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: VideoPanel(videoUrl: url),
                   )),
-            if (report.audioUrls.isNotEmpty)
-              ...report.audioUrls.map((url) => Padding(
+            if (report?.audioUrls.isNotEmpty ?? false)
+              ...report!.audioUrls.map((url) => Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: AudioPanel(
                       audioUrl: url,
                       title: 'Audio Evidence',
                     ),
                   )),
-            if (report.photoUrls.isEmpty &&
-                report.videoUrls.isEmpty &&
-                report.audioUrls.isEmpty)
+            if ((report?.photoUrls.isEmpty ?? true) &&
+                (report?.videoUrls.isEmpty ?? true) &&
+                (report?.audioUrls.isEmpty ?? true))
               const Text('No evidence attached.'),
           ],
         ),

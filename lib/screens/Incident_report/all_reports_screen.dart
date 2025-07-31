@@ -71,6 +71,9 @@ class AllReportsScreen extends ConsumerWidget {
                                                 ? AppColors.info
                                                 : AppColors.error,
                                 onTap: () {
+                                  ref
+                                      .read(incidentReportProvider.notifier)
+                                      .setSelectedReport(report);
                                   context.go(
                                     '${AppRouter.incidentReport}/view-report',
                                     extra: report,

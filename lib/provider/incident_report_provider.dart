@@ -228,6 +228,16 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
+
+  // get selected report
+  IncidentReport? get selectedReport {
+    return state.currentReport;
+  }
+
+  // set selected report
+  void setSelectedReport(IncidentReport? report) {
+    state = state.copyWith(currentReport: report);
+  }
 }
 
 // Providers
