@@ -37,6 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final authState = ref.read(authProvider);
       if (authState.isAuthenticated) {
         // Navigate to home screen
+        if (!mounted) return;
         context.go(AppRouter.home);
       } else if (authState.error != null) {
         // Show error message
@@ -57,6 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final authState = ref.read(authProvider);
     if (authState.isAuthenticated) {
+      if (!mounted) return;
       context.go(AppRouter.home);
     } else if (authState.error != null) {
       if (mounted) {

@@ -74,6 +74,7 @@ Future<void> downloadCertificateToPhone({
       ),
     );
   } catch (e) {
+    if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Error saving certificate: $e'), backgroundColor: AppColors.error),
     );

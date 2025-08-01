@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_rights_mobile_app/models/user_model.dart';
@@ -47,8 +48,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   void _onAuthStateChanged(User? firebaseUser) async {
-    print('🔄 Auth state changed: ${firebaseUser?.uid ?? "null"}');
-    print('📧 Email: ${firebaseUser?.email ?? "null"}');
+    if (kDebugMode) {
+      print('🔄 Auth state changed: ${firebaseUser?.uid ?? "null"}');
+      print('📧 Email: ${firebaseUser?.email ?? "null"}');
+    }
 
     if (firebaseUser != null) {
       // Set loading state and clear previous user data
@@ -60,7 +63,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       try {
-        print('📄 Fetching user document for UID: ${firebaseUser.uid}');
+        if (kDebugMode) {
+          print('📄 Fetching user document for UID: ${firebaseUser.uid}');
+        }
         final userDoc = await FirebaseService.getUserDocument(firebaseUser.uid);
 
         if (userDoc != null) {
@@ -74,8 +79,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
             isAwaitingOTPVerification: !userDoc.isEmailVerified,
           );
         } else {
-          print('🆕 Creating new user document...');
-          print('Auth: Creating new user document for UID: ${firebaseUser.uid}');
+          if (kDebugMode) {
+            print('🆕 Creating new user document...');
+            print('Auth: Creating new user document for UID: ${firebaseUser.uid}');
+          }
           await FirebaseService.createUserDocument(
             uid: firebaseUser.uid,
             name: firebaseUser.displayName ?? '',
@@ -84,7 +91,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
           final newUserDoc =
               await FirebaseService.getUserDocument(firebaseUser.uid);
-          print('✅ New user document created: ${newUserDoc?.email}');
+          if (kDebugMode) print('✅ New user document created: ${newUserDoc?.email}');
 
           state = state.copyWith(
             isAuthenticated: false, // Not authenticated until email is verified
@@ -95,7 +102,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         }
       } catch (e) {
-        print('❌ Error loading user data: $e');
+        if (kDebugMode) {
+          print('❌ Error loading user data: $e');
+        }
         state = state.copyWith(
           isLoading: false,
           error: 'Failed to load user data: $e',
@@ -104,17 +113,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } else {
-      print('🚪 User signed out - clearing all data');
-      print('Auth: No Firebase user found');
+      if (kDebugMode) {
+        print('🚪 User signed out - clearing all data');
+        print('Auth: No Firebase user found');
+      }
       state = const AuthState();
     }
 
-    print(
+    if (kDebugMode) {
+        print(
         '🏁 Final state - Authenticated: ${state.isAuthenticated}, User: ${state.user?.email}, Awaiting OTP: ${state.isAwaitingOTPVerification}');
+    }
   }
 
   Future<void> signup(String name, String email, String password) async {
-    print('📝 Starting signup for: $email');
+
+    if (kDebugMode) {
+      print('📝 Starting signup for: $email');
+    }
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -137,10 +153,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         isAwaitingOTPVerification: true,
         isAuthenticated: false,
       );
-
-      print('✅ Signup completed for: $email, OTP sent');
+      
+      if (kDebugMode) print('✅ Signup completed for: $email, OTP sent');
     } catch (e) {
-      print('❌ Signup error: $e');
+      if (kDebugMode) print('❌ Signup error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -149,7 +165,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> login(String email, String password) async {
-    print('🔑 Starting login for: $email');
+    
+    if (kDebugMode) print('🔑 Starting login for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -157,10 +174,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         email: email,
         password: password,
       );
-      print('✅ Login successful for: $email');
+      if (kDebugMode) print('✅ Login successful for: $email');
       // Auth state will be updated by the listener
     } catch (e) {
-      print('❌ Login error: $e');
+      if (kDebugMode) print('❌ Login error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -179,7 +196,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       if (isValid) {
-        print('✅ Email OTP verified successfully');
+        
+        if (kDebugMode) print('✅ Email OTP verified successfully');
 
         // Update local state
         if (state.user != null) {
@@ -192,14 +210,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         }
       } else {
-        print('❌ Invalid email OTP');
+        if (kDebugMode) print('❌ Invalid email OTP');
         state = state.copyWith(
           isLoading: false,
           error: 'Invalid or expired OTP. Please try again.',
         );
       }
     } catch (e) {
-      print('❌ Email OTP verification error: $e');
+      if (kDebugMode) print('❌ Email OTP verification error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -208,16 +226,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> forgotPassword(String email) async {
-    print('🔑 Starting forgot password for: $email');
+    if (kDebugMode) print('🔑 Starting forgot password for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       await FirebaseService.sendPasswordResetOTP(email);
 
       state = state.copyWith(isLoading: false);
-      print('✅ Password reset OTP sent for: $email');
+      if (kDebugMode) print('✅ Password reset OTP sent for: $email');
     } catch (e) {
-      print('❌ Forgot password error: $e');
+      if (kDebugMode) print('❌ Forgot password error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -227,16 +245,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Resend email verification OTP
   Future<void> resendEmailVerificationOTP(String email) async {
-    print('📧 Resending email verification OTP for: $email');
+    if (kDebugMode) print('📧 Resending email verification OTP for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       await FirebaseService.resendEmailVerificationOTP(email);
 
       state = state.copyWith(isLoading: false);
-      print('✅ Email verification OTP resent');
+      if (kDebugMode) print('✅ Email verification OTP resent');
     } catch (e) {
-      print('❌ Resend OTP error: $e');
+      if (kDebugMode) print('❌ Resend OTP error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -246,16 +264,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Send password reset OTP
   Future<void> sendPasswordResetOTP(String email) async {
-    print('🔑 Sending password reset OTP for: $email');
+    if (kDebugMode) print('🔑 Sending password reset OTP for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       await FirebaseService.sendPasswordResetOTP(email);
 
       state = state.copyWith(isLoading: false);
-      print('✅ Password reset OTP sent');
+      
+      if (kDebugMode) print('✅ Password reset OTP sent');
     } catch (e) {
-      print('❌ Password reset OTP error: $e');
+      if (kDebugMode) print('❌ Password reset OTP error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -265,7 +284,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // Verify password reset OTP
   Future<bool> verifyPasswordResetOTP(String email, String otp) async {
-    print('🔍 Verifying password reset OTP for: $email');
+    if (kDebugMode) print('🔍 Verifying password reset OTP for: $email');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -284,7 +303,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       return isValid;
     } catch (e) {
-      print('❌ Password reset OTP verification error: $e');
+      if (kDebugMode) print('❌ Password reset OTP verification error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -294,12 +313,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    print('🚪 Starting logout...');
+    if (kDebugMode) print('🚪 Starting logout...');
     try {
       await FirebaseService.signOut();
-      print('✅ Logout successful');
+      if (kDebugMode) print('✅ Logout successful');
     } catch (e) {
-      print('❌ Logout error: $e');
+      if (kDebugMode) print('❌ Logout error: $e');
       state = state.copyWith(error: e.toString());
     }
   }
@@ -362,15 +381,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
-    print('🔑 Starting Google Sign-In...');
+    if (kDebugMode) print('🔑 Starting Google Sign-In...');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       final credential = await FirebaseService.signInWithGoogle();
 
-      print('✅ Google Sign-In successful for: ${credential.user?.email}');
+      if (kDebugMode) print('✅ Google Sign-In successful for: ${credential.user?.email}');
     } catch (e) {
-      print('❌ Google Sign-In error: $e');
+      if (kDebugMode) print('❌ Google Sign-In error: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),

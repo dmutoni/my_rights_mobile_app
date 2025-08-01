@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../service/report_type_service.dart';
 
 class SeedData {
@@ -5,7 +7,9 @@ class SeedData {
     try {
       await ReportTypeService.seedDefaultReportTypes();
     } catch (e) {
-      print('Error seeding report types: $e');
+      if (kDebugMode) {
+        print('Error seeding report types: $e');
+      }
     }
   }
 } 

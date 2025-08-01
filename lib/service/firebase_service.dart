@@ -231,6 +231,7 @@ class FirebaseService {
   static Future<void> sendPasswordResetOTP(String email) async {
     try {
       // Check if user exists
+      // ignore: deprecated_member_use
       final methods = await _auth.fetchSignInMethodsForEmail(email);
       if (methods.isEmpty) {
         throw Exception('No account found with this email address');

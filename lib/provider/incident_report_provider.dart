@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/incident_report_model.dart';
 import '../service/incident_report_service.dart';
@@ -41,13 +42,13 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
   IncidentReportNotifier(this.ref) : super(const IncidentReportState()) {
     // Initialize user reports stream when authenticated
     ref.listen(authProvider, (previous, next) {
-      print(
-          'Auth state changed: isAuthenticated=${next.isAuthenticated}, user=${next.user?.id}');
+      if (kDebugMode) { print(
+          'Auth state changed: isAuthenticated=${next.isAuthenticated}, user=${next.user?.id}');}
       if (next.isAuthenticated && next.user != null) {
-        print('Initializing reports stream for user: ${next.user!.id}');
+        if (kDebugMode) { print('Initializing reports stream for user: ${next.user!.id}');}
         _initUserReportsStream(next.user!.id);
       } else {
-        print('Clearing reports stream - user logged out or not authenticated');
+        if (kDebugMode) { print('Clearing reports stream - user logged out or not authenticated');}
         // Clear subscription when user logs out
         _reportsSubscription?.cancel();
         state = state.copyWith(userReports: []);
@@ -57,32 +58,30 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
     // Also initialize immediately if user is already authenticated
     final currentAuth = ref.read(authProvider);
     if (currentAuth.isAuthenticated && currentAuth.user != null) {
-      print(
-          'Initializing reports stream immediately for user: ${currentAuth.user!.id}');
+      if (kDebugMode) { print('Initializing reports stream immediately for user: ${currentAuth.user!.id}');}
       _initUserReportsStream(currentAuth.user!.id);
     }
   }
 
   void _initUserReportsStream(String userId) {
-    print('Initializing user reports stream for user: $userId');
+    if (kDebugMode) { print('Initializing user reports stream for user: $userId');}
 
     // Cancel existing subscription
     _reportsSubscription?.cancel();
 
-    print('Setting up Firestore stream for user: $userId');
+    if (kDebugMode) { print('Setting up Firestore stream for user: $userId');}
     _reportsSubscription = IncidentReportService.getUserReports(userId).listen(
       (reports) {
-        print('Received ${reports.length} reports for user: $userId');
-        print(
-            'Reports: ${reports.map((r) => '${r.title} (${r.id})').toList()}');
+        if (kDebugMode) { print('Received ${reports.length} reports for user: $userId');}
+        if (kDebugMode) { print('Reports: ${reports.map((r) => '${r.title} (${r.id})').toList()}');}
         state = state.copyWith(userReports: reports);
       },
       onError: (error) {
-        print('Error loading user reports: $error');
+        if (kDebugMode) { print('Error loading user reports: $error');}
         state = state.copyWith(error: error.toString());
       },
     );
-    print('Stream subscription created');
+    if (kDebugMode) { print('Stream subscription created');}
   }
 
   // Create a new report
@@ -99,8 +98,8 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
       final user = ref.read(authProvider).user;
       if (user == null) throw Exception('User not authenticated');
 
-      print('Creating report for user: ${user.id}');
-      print('Report details: title=$title, reportTypeId=$reportTypeId');
+      if (kDebugMode) print('Creating report for user: ${user.id}');
+      if (kDebugMode) print('Report details: title=$title, reportTypeId=$reportTypeId');
 
       final report = IncidentReport.create(
         userId: user.id,
@@ -112,16 +111,16 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
         isAnonymous: isAnonymous,
       );
 
-      print('Report created with tracking number: ${report.trackingNumber}');
+      if (kDebugMode) print('Report created with tracking number: ${report.trackingNumber}');
       final createdReport = await IncidentReportService.createReport(report);
-      print('Report saved to Firestore with ID: ${createdReport.id}');
+      if (kDebugMode) print('Report saved to Firestore with ID: ${createdReport.id}');
 
       state = state.copyWith(
         isLoading: false,
         currentReport: createdReport,
       );
     } catch (e) {
-      print('Error creating report: $e');
+      if (kDebugMode) print('Error creating report: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -163,7 +162,7 @@ class IncidentReportNotifier extends StateNotifier<IncidentReportState> {
         error: e.toString(),
       );
 
-      print('Error uploading evidence: $e $stackTrace');
+      if (kDebugMode) print('Error uploading evidence: $e $stackTrace');
     }
   }
 

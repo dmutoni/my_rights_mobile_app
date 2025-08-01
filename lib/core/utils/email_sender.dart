@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
@@ -23,9 +24,13 @@ class GmailService {
 
       // Send email
       final sendReport = await send(message, smtpServer);
-      print('✅ Email sent: ${sendReport.toString()}');
+      if (kDebugMode) {
+        print('✅ Email sent: ${sendReport.toString()}');
+      }
     } catch (e) {
-      print('❌ Gmail error: $e');
+      if (kDebugMode) {
+        print('❌ Gmail error: $e');
+      }
       throw Exception('Failed to send email: $e');
     }
   }
