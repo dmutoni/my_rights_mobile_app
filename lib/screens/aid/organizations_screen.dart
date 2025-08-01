@@ -8,15 +8,14 @@ import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
-
 
 class OrganizationScreen extends ConsumerWidget {
   const OrganizationScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final organizations = ref.watch(organizationsProvider).filteredOrganizations;
+    final organizations =
+        ref.watch(organizationsProvider).filteredOrganizations;
     final loading = ref.watch(organizationsProvider).loading;
     final error = ref.watch(organizationsProvider).error;
     final searchQuery = ref.watch(organizationsProvider).searchQuery;
@@ -28,11 +27,13 @@ class OrganizationScreen extends ConsumerWidget {
         child: Column(
           children: [
             CustomSearchBar(
-              hintText: 'Search for organization',
-              query: searchQuery,
-              onChanged: (value) {
-                ref.read(organizationsProvider.notifier).setSearchQuery(value);
-              }),
+                hintText: 'Search for organization',
+                query: searchQuery,
+                onChanged: (value) {
+                  ref
+                      .read(organizationsProvider.notifier)
+                      .setSearchQuery(value);
+                }),
             if (loading) ...[
               const Center(child: CircularProgressIndicator()),
             ],
@@ -61,32 +62,31 @@ class OrganizationScreen extends ConsumerWidget {
             ],
             if (organizations.isEmpty) ...[
               EmptyCard(
-                  icon: MingCuteIcons.mgc_building_1_line,
-                  title: 'No Legal Organizations Available',
-                  description: 'Legal organizations will appear here when available. Check back later for new content!',
+                icon: MingCuteIcons.mgc_building_1_line,
+                title: 'No Legal Organizations Available',
+                description:
+                    'Legal organizations will appear here when available. Check back later for new content!',
               )
             ] else ...[
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(left: 20, bottom: 24),
-                  itemCount: organizations.length,
-                  itemBuilder: (context, index) {
-                    final organization = organizations[index];
+                  child: ListView.builder(
+                padding: const EdgeInsets.only(left: 20, bottom: 24),
+                itemCount: organizations.length,
+                itemBuilder: (context, index) {
+                  final organization = organizations[index];
                   return CustomListItem(
-                    icon: MingCuteIcons.mgc_building_1_line,
-                    title: organization.name,
-                    subtitle: organization.location,
-                    onTap: () {
-                      context.go('${AppRouter.aid}/${organization.id}');
-                    }
-                  );
+                      icon: MingCuteIcons.mgc_building_1_line,
+                      title: organization.name,
+                      subtitle: organization.location,
+                      onTap: () {
+                        context.go('${AppRouter.aid}/${organization.id}');
+                      });
                 },
               ))
             ]
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 }

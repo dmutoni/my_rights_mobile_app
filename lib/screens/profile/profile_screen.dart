@@ -59,7 +59,7 @@ class ProfileScreen extends ConsumerWidget {
         ),
         child: Center(
           child: Text(
-            user?.initials ?? 'U',
+            'DM',
             style: TextStyle(
               fontSize: 48,
               fontWeight: FontWeight.bold,

@@ -184,6 +184,32 @@ class AppRouter {
               ],
             ),
             GoRoute(
+              path: aid,
+              name: 'aid',
+              builder: (context, state) => const OrganizationScreen(),
+              routes: [
+                GoRoute(
+                    path: ':id',
+                    name: 'lawyers',
+                    builder: (context, state) {
+                      final organization = state.pathParameters['id'];
+                      return LawyersScreen(organization: organization);
+                    },
+                    routes: [
+                      GoRoute(
+                        path: ':lawyerId',
+                        name: 'lawyer',
+                        builder: (context, state) {
+                          final id = state.pathParameters['lawyerId'] ?? '';
+                          return LawyerProfileScreen(
+                            lawyerId: id,
+                          );
+                        },
+                      )
+                    ]),
+              ],
+            ),
+            GoRoute(
               path: incidentReport,
               name: 'incidentReport',
               builder: (context, state) => const AllReportsScreen(),
@@ -237,33 +263,6 @@ class AppRouter {
           name: 'help',
           builder: (context, state) => const HelpScreen(),
         ),
-      GoRoute(
-        path: aid,
-        name: 'aid',
-        builder: (context, state) => const OrganizationScreen(),
-        routes: [
-          GoRoute(
-            path: ':id',
-            name: 'lawyers',
-            builder: (context, state) {
-              final organization = state.pathParameters['id'];
-              return LawyersScreen(organization: organization);
-            },
-            routes: [
-              GoRoute(
-                path: ':lawyerId',
-                name: 'lawyer',
-                builder: (context, state) {
-                  final id = state.pathParameters['lawyerId'] ?? '';
-                  return LawyerProfileScreen(
-                    lawyerId: id,
-                  );
-                },
-              )
-            ]
-          ),
-        ],
-      ),
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(

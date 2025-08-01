@@ -625,6 +625,6 @@ class FirebaseService {
     return _firestore.collection(collection).where(field, isGreaterThanOrEqualTo: value).where(field, isLessThanOrEqualTo: value + '\uf8ff').snapshots();
   }
 
-  static getDocumentStream(String s, String lawyerId) {}
+  static void getDocumentStream(String s, String lawyerId) {}
 }
 
