@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../shared/widgets/custom_list.dart';
@@ -19,18 +20,24 @@ class AllReportsScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     // Debug: Print current user info
-    if (authState.user != null) {
-      print('Current user ID: ${authState.user!.id}');
-      print('Current user name: ${authState.user!.name}');
-    } else {
-      print('No user authenticated');
+    if (kDebugMode) {
+      if (authState.user != null) {
+        print('Current user ID: ${authState.user!.id}');
+        print('Current user name: ${authState.user!.name}');
+      } else {
+        print('No user authenticated');
+      }
     }
 
     // Debug: Print reports info
-    print('AllReportsScreen: Found ${reports.length} reports');
+    if (kDebugMode) {
+        print('AllReportsScreen: Found ${reports.length} reports');
+    }
     for (int i = 0; i < reports.length; i++) {
-      print(
-          'Report $i: ${reports[i].title} (ID: ${reports[i].id}, UserID: ${reports[i].userId})');
+      if (kDebugMode) {
+        print(
+            'Report $i: ${reports[i].title} (ID: ${reports[i].id}, UserID: ${reports[i].userId})');
+      }
     }
 
     return Scaffold(

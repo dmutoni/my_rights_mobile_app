@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -153,7 +154,9 @@ class _ReportIncidentScreenState extends ConsumerState<ReportIncidentScreen> {
           }
         }
       } catch (e) {
-        print('Error uploading evidence: $e');
+        if (kDebugMode) {
+          print('Error uploading evidence: $e');
+        }
         // Continue with report submission even if evidence upload fails
       }
 

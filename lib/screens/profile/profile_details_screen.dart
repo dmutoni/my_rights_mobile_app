@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_rights_mobile_app/core/theme/app_colors.dart';
+import 'package:my_rights_mobile_app/models/user_model.dart';
 import 'package:my_rights_mobile_app/provider/auth_provider.dart';
 import 'package:my_rights_mobile_app/shared/widgets/custom_app_bar.dart';
 
@@ -132,9 +133,9 @@ class _ProfileScreenState extends ConsumerState<ProfileDetailsScreen> {
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: .1),
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.2),
+                        color: AppColors.primary.withValues(alpha: .2),
                         width: 3,
                       ),
                     ),
@@ -263,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileDetailsScreen> {
     );
   }
 
-  Widget _buildAvatarFallback(user) {
+  Widget _buildAvatarFallback(UserModel? user) {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -307,7 +308,7 @@ class _ProfileScreenState extends ConsumerState<ProfileDetailsScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

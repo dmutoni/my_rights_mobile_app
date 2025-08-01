@@ -219,6 +219,7 @@ class QuizScreen extends ConsumerWidget {
                                     'certificateId': certificateId,
                                   },
                                 );
+                                if (!context.mounted) return;
                                 Navigator.of(context).pop(); // Close result screen
                               },
                               onViewAnswers: () {

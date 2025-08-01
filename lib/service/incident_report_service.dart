@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:my_rights_mobile_app/service/cloudinary_service.dart';
 import '../models/incident_report_model.dart';
 
@@ -12,13 +13,17 @@ class IncidentReportService {
 
   // Create a new incident report
   static Future<IncidentReport> createReport(IncidentReport report) async {
-    print('Creating incident report in Firestore...');
-    print('Report data: ${report.toFirestore()}');
+    if (kDebugMode) {
+      print('Creating incident report in Firestore...');
+      print('Report data: ${report.toFirestore()}');
+    }
 
     final docRef =
         await _firestore.collection(_collection).add(report.toFirestore());
 
-    print('Report created with document ID: ${docRef.id}');
+    if (kDebugMode) {
+      print('Report created with document ID: ${docRef.id}');
+    }
     return report.copyWith(id: docRef.id);
   }
 
@@ -44,38 +49,47 @@ class IncidentReportService {
 
   // Get all reports for a user
   static Stream<List<IncidentReport>> getUserReports(String userId) {
-    print('Getting reports for user: $userId');
+      if (kDebugMode) print('Getting reports for user: $userId');
 
     // First, let's check all reports to see what's in the collection
     _firestore.collection(_collection).get().then((allDocs) {
-      print('=== ALL REPORTS IN COLLECTION ===');
-      print('Total documents in collection: ${allDocs.docs.length}');
+      if (kDebugMode) {
+        print('=== ALL REPORTS IN COLLECTION ===');
+        print('Total documents in collection: ${allDocs.docs.length}');
+      }
       for (var doc in allDocs.docs) {
         final data = doc.data();
-        print('Doc ID: ${doc.id}');
-        print(
-            '  - userId: "${data['userId']}" (length: ${data['userId']?.toString().length})');
-        print('  - title: "${data['title']}"');
-        print('  - trackingNumber: "${data['trackingNumber']}"');
-        print('  - createdAt: ${data['createdAt']}');
-        print('---');
-      }
-      print('================================');
 
-      // Now let's test the specific query
-      print('=== TESTING SPECIFIC QUERY ===');
+        if (kDebugMode) {
+          print('Doc ID: ${doc.id}');
+          print(
+              '  - userId: "${data['userId']}" (length: ${data['userId']?.toString().length})');
+          print('  - title: "${data['title']}"');
+          print('  - trackingNumber: "${data['trackingNumber']}"');
+          print('  - createdAt: ${data['createdAt']}');
+          print('---');
+        }
+      }
+
+      if (kDebugMode) {
+        print('================================');
+
+        // Now let's test the specific query
+        print('=== TESTING SPECIFIC QUERY ===');
+      }
       _firestore
           .collection(_collection)
           .where('userId', isEqualTo: userId)
           .get()
           .then((queryResult) {
-        print('Direct query result: ${queryResult.docs.length} documents');
+
+        if (kDebugMode) print('Direct query result: ${queryResult.docs.length} documents');
 
         for (var doc in queryResult.docs) {
-          print('Query result doc: ${doc.id} - ${doc.data()}');
+          if (kDebugMode) print('Query result doc: ${doc.id} - ${doc.data()}');
         }
       }).catchError((error, stackTrace) {
-        print('Query error: $error');
+        if (kDebugMode) print('Query error: $error');
       });
     });
 
@@ -85,10 +99,11 @@ class IncidentReportService {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) {
-      print('Found ${snapshot.docs.length} reports for user: $userId');
+      
+      if (kDebugMode) print('Found ${snapshot.docs.length} reports for user: $userId');
 
       for (var doc in snapshot.docs) {
-        print('Document ID: ${doc.id}, Data: ${doc.data()}');
+        if (kDebugMode) print('Document ID: ${doc.id}, Data: ${doc.data()}');
       }
       return snapshot.docs
           .map((doc) => IncidentReport.fromFirestore(doc))
@@ -121,7 +136,8 @@ class IncidentReportService {
 
       // 3. CHECK FILE SIZE
       final fileSize = await file.length();
-      print('File size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)} MB');
+      
+      if (kDebugMode) print('File size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)} MB');
 
       // Optional: Limit file size (10MB for example)
       if (fileSize > 10 * 1024 * 1024) {
@@ -129,13 +145,17 @@ class IncidentReportService {
       }
 
       // 4. UPLOAD TO CLOUDINARY
-      print('Uploading to Cloudinary...');
+      
+      if (kDebugMode) print('Uploading to Cloudinary...');
       final downloadUrl = await CloudinaryService.uploadFile(file);
-      print('File uploaded successfully: $downloadUrl');
+      
+      if (kDebugMode) print('File uploaded successfully: $downloadUrl');
       return downloadUrl;
     } catch (e, stackTrace) {
-      print('Error uploading file: $e at $stackTrace');
-      print('Error details: ${e.toString()}');
+      if (kDebugMode) {
+        print('Error uploading file: $e at $stackTrace');
+        print('Error details: ${e.toString()}');
+      }
       rethrow;
     }
   }
@@ -160,7 +180,7 @@ class IncidentReportService {
         await item.delete();
       }
     } catch (e) {
-      print('Error deleting files: $e');
+      if (kDebugMode) print('Error deleting files: $e');
     }
 
     // Delete the document

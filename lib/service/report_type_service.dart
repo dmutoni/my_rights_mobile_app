@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/report_type.dart';
 
 class ReportTypeService {
@@ -47,7 +48,9 @@ class ReportTypeService {
     // Check if report types already exist
     final existingTypes = await _firestore.collection(_collection).limit(1).get();
     if (existingTypes.docs.isNotEmpty) {
-      print('Report types already exist, skipping seeding');
+      if (kDebugMode) {
+        print('Report types already exist, skipping seeding');
+      }
       return;
     }
 
@@ -112,6 +115,7 @@ class ReportTypeService {
     }
 
     await batch.commit();
-    print('Report types seeded successfully');
+    
+    if (kDebugMode) print('Report types seeded successfully');
   }
 } 
