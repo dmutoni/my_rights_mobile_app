@@ -9,7 +9,6 @@ import 'package:ming_cute_icons/ming_cute_icons.dart';
 import 'package:my_rights_mobile_app/shared/widgets/empty_card.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_rights_mobile_app/core/router/app_router.dart';
-import 'package:my_rights_mobile_app/shared/widgets/custom_bottom_navbar.dart';
 
 class LawyersScreen extends ConsumerWidget {
   final String? organization;
@@ -23,7 +22,10 @@ class LawyersScreen extends ConsumerWidget {
     final error = ref.watch(lawyersProvider).error;
     final searchQuery = ref.watch(lawyersProvider).searchQuery;
     final organizations = ref.watch(organizationsProvider).organizations;
-    final correspondingOrganizations = organizations.where((org) => lawyers.any((lawyer) => lawyer.organizations.contains(org.id))).toList();
+    final correspondingOrganizations = organizations
+        .where((org) =>
+            lawyers.any((lawyer) => lawyer.organizations.contains(org.id)))
+        .toList();
 
     return Scaffold(
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -40,8 +42,7 @@ class LawyersScreen extends ConsumerWidget {
             ),
             if (loading) ...[
               const Center(child: CircularProgressIndicator()),
-            ]
-            else if (error != null) ...[
+            ] else if (error != null) ...[
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -63,47 +64,49 @@ class LawyersScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-            ]
-            else if (lawyers.isEmpty) ...[
+            ] else if (lawyers.isEmpty) ...[
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.2),
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.2),
                 child: EmptyCard(
                   icon: MingCuteIcons.mgc_user_3_fill,
                   title: 'No Legal Lawyers Available',
-                  description: 'Legal lawyers will appear here when available. Check back later for new content!',
+                  description:
+                      'Legal lawyers will appear here when available. Check back later for new content!',
                 ),
               )
             ] else ...[
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(left: 20, bottom: 24),
-                  itemCount: lawyers.length,
-                  itemBuilder: (context, index) {
-                    final lawyer = lawyers[index];
-                    return CustomListItem(
-                        leading: lawyer.profileImageUrl != null
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(lawyer.profileImageUrl!),
-                                radius: 24,
-                              )
-                            : null,
-                        icon: MingCuteIcons.mgc_user_3_line,
-                        title: lawyer.name,
-                        subtitle: correspondingOrganizations.isNotEmpty
-                            ? correspondingOrganizations.map((org) => org.name).join(', ')
-                            : 'No organizations',
-                        onTap: () {
-                          context.go('${AppRouter.aid}/$organization/${lawyer.id}');
-                        }
-                    );
-                  },
-                )
-              )
+                  child: ListView.builder(
+                padding: const EdgeInsets.only(left: 20, bottom: 24),
+                itemCount: lawyers.length,
+                itemBuilder: (context, index) {
+                  final lawyer = lawyers[index];
+                  return CustomListItem(
+                      leading: lawyer.profileImageUrl != null
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(lawyer.profileImageUrl!),
+                              radius: 24,
+                            )
+                          : null,
+                      icon: MingCuteIcons.mgc_user_3_line,
+                      title: lawyer.name,
+                      subtitle: correspondingOrganizations.isNotEmpty
+                          ? correspondingOrganizations
+                              .map((org) => org.name)
+                              .join(', ')
+                          : 'No organizations',
+                      onTap: () {
+                        context
+                            .go('${AppRouter.aid}/$organization/${lawyer.id}');
+                      });
+                },
+              ))
             ],
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavBar(),
     );
   }
 }
